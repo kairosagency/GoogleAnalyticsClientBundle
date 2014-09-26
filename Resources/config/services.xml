@@ -8,11 +8,12 @@
 
     <services>
         <service id="kairos_google_analytics_client.manager.access_token" class="%kairos_google_analytics_client.manager.access_token.class%">
-            <argument>%kernel.root_dir%</argument>
+            <argument type="service" id="service_container" />
             <argument>%kairos_google_analytics_client.oauth.base_url%</argument>
             <argument>%kairos_google_analytics_client.oauth.token_end_point%</argument>
             <argument>%kairos_google_analytics_client.oauth.client_email%</argument>
             <argument>%kairos_google_analytics_client.oauth.private_key%</argument>
+            <argument>%kernel.root_dir%</argument>
         </service>
     </services>
 </container>

@@ -1,76 +1,88 @@
 <?php
-namespace Kairos\GoogleAnalyticsClientBundle\Manager;
 
+namespace Kairos\GoogleAnalyticsClientBundle\AuthClient;
+
+use Doctrine\Common\Cache\Cache;
 use Guzzle\Http\Client;
 use Kairos\GoogleAnalyticsClientBundle\Exception\GoogleAnalyticsException;
 
-class AccessTokenManager
+/**
+ * Class AuthClient
+ * @package Kairos\GoogleAnalyticsClientBundle\AuthClient
+ */
+class P12AuthClient extends AbstractAuthClient
 {
     /**
-     * @var
+     * @var string
      */
     protected $baseUrl;
 
     /**
-     * @var
+     * @var string
      */
     protected $tokenEndPoint;
 
     /**
-     * @var
+     * @var string
      */
     protected $clientEmail;
 
     /**
-     * @var Certificate p12 file for google analytics
+     * Certificate P12 file for google analytics
+     *
+     * @var P12
      */
     protected $privateKey;
 
     /**
-     * @param $keyDir
+     * @var \Doctrine\Common\Cache\Cache
+     */
+    protected $cacheProvider;
+
+    /**
+     * Lifetime parameter for the cache provider
+     *
+     * @var integer
+     */
+    protected $cacheTTL;
+
+
+    /**
+     * @param Cache $cacheProvider
      * @param $baseUrl
      * @param $tokenEndPoint
      * @param $clientEmail
      * @param $privateKey
+     * @param $kernelRootDir
+     * @param int $cacheTTL
      */
-    public function __construct($rootDir, $baseUrl, $tokenEndPoint, $clientEmail, $privateKey)
+    public function __construct(Cache $cacheProvider, $baseUrl, $tokenEndPoint, $clientEmail, $privateKey, $kernelRootDir, $cacheTTL = 3600)
     {
+        $this->cacheProvider = $cacheProvider;
         $this->baseUrl = $baseUrl;
         $this->tokenEndPoint = $tokenEndPoint;
         $this->clientEmail = $clientEmail;
-        $this->privateKey = $rootDir . '/certificates/' . $privateKey;
+        $this->privateKey = $kernelRootDir . '/certificates/' . $privateKey;
+        $this->cacheTTL = $cacheTTL;
     }
 
-
     /**
-     * Get the stored token in database or return false
+     * {@inheritDoc}
      *
-     * @return AuthToken entity OR false
+     * @return string
      */
-    public function getValidAccessToken()
+    protected function generateCacheKey()
     {
-        $authToken = $this->getRepository()->findAll();
-        $exp = new \Datetime('-1 hours');
-
-        if (isset($authToken[0]) && $authToken[0]->getAccessToken() != null && $authToken[0]->getUpdatedAt(
-            ) != null && $authToken[0]->getUpdatedAt() > $exp
-        ) {
-            return $authToken[0]->getAccessToken();
-        } else {
-            $authToken = new AuthToken();
-            $authToken->setAccessToken($this->getAccessToken());
-            $this->save($authToken);
-            return $authToken->getAccessToken();
-        }
+        return md5($this->clientEmail);
     }
 
     /**
-     * Gets the google OAuth access token.
+     * {@inheritDoc}
      *
      * @throws \Kairos\GoogleAnalyticsClientBundle\Exception\GoogleAnalyticsException If the access token can not be retrieved.
-     * @return string The access token.
+     * @return string
      */
-    public function getAccessToken()
+    protected function requestAccessToken()
     {
         $url = $this->baseUrl . $this->tokenEndPoint;
         $headers = array('Content-Type' => 'application/x-www-form-urlencoded');
@@ -97,7 +109,7 @@ class AccessTokenManager
      *
      * @return string The Json Web Token (JWT).
      */
-    protected function generateJsonWebToken()
+    private function generateJsonWebToken()
     {
         $url = $this->baseUrl . $this->tokenEndPoint;
         $exp = new \DateTime('+1 hours', new \DateTimeZone('Europe/Paris'));
@@ -129,7 +141,7 @@ class AccessTokenManager
      * @throws \Kairos\GoogleAnalyticsClientBundle\Exception\GoogleAnalyticsException If an error occured when generating the signature.
      * @return string The JWT signature.
      */
-    protected function generateSignature($jsonWebToken)
+    private function generateSignature($jsonWebToken)
     {
         if (!function_exists('openssl_x509_read')) {
             throw GoogleAnalyticsException::invalidOpenSslExtension();
