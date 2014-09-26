@@ -1,0 +1,18 @@
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="kairos_google_analytics_client.manager.access_token.class">Kairos\GoogleAnalyticsClientBundle\Manager\AccessTokenManager</parameter>
+    </parameters>
+
+    <services>
+        <service id="kairos_google_analytics_client.manager.access_token" class="%kairos_google_analytics_client.manager.access_token.class%">
+            <argument>%kernel.root_dir%</argument>
+            <argument>%kairos_google_analytics_client.oauth.base_url%</argument>
+            <argument>%kairos_google_analytics_client.oauth.token_end_point%</argument>
+            <argument>%kairos_google_analytics_client.oauth.client_email%</argument>
+            <argument>%kairos_google_analytics_client.oauth.private_key%</argument>
+        </service>
+    </services>
+</container>
