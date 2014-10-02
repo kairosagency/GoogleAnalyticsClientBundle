@@ -1,33 +1,29 @@
 {
-    "name": "kairos/googleanalyticsserversidebundle",
+    "name": "kairos/google-analytics-client-bundle",
     "type": "library",
     "license": "LGPL-3.0",
-    "description": "Symfony 2 bundle, push your google analytics hits from the server",
-    "keywords": ["php-ga","google-analytics", "measurement protocol", "server-side-analytics"],
-    "homepage": "https://github.com/kairosagency/GoogleAnalyticsServerSideBundle.git",
+    "description": "Symfony 2 bundle, get data from google analytics",
+    "keywords": ["php-ga","google-analytics", "client", "ga collect data"],
+    "homepage": "https://github.com/kairosagency/GoogleAnalyticsClientBundle.git",
     "authors": [
         {
             "name": "t0k4rt",
+            "email": "assouad@kairostag.com",
             "homepage": "https://github.com/t0k4rt",
             "role": "Developer"
         },
         {
             "name": "Matthiew",
+            "email": "faule@kairostag.com",
             "homepage": "https://github.com/Matthiew",
             "role": "Developer"
         }
     ],
     "require": {
-        "php": ">=5.3.0",
-        "symfony/framework-bundle": "~2.1",
-        "kairos/googleanalyticsserverside": "~1.0.1",
-        "krizon/php-ga-measurement-protocol": "~0.1.0"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "~3.7"
+        "php": ">=5.4.0"
     },
     "autoload": {
-        "psr-0": { "Kairos\\GoogleAnalyticsServerSideBundle": "" }
+        "psr-0": { "Kairos\\GoogleAnalyticsClientBundle": "" }
     },
-    "target-dir": "Kairos/GoogleAnalyticsServerSideBundle"
+    "target-dir": "Kairos/GoogleAnalyticsClientBundle"
 }
