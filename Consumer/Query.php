@@ -1,32 +1,16 @@
 <?php
 
-/*
- * This file is part of the Wid'op package.
- *
- * (c) Wid'op <contact@widop.com>
- *
- * For the full copyright and license information, please read the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Kairos\GoogleAnalyticsClientBundle\Consumer;
 
-/**
- * Google Analytics Query.
- *
- * @author GeLo <geloen.eric@gmail.com>
- */
 class Query
 {
-    /** @const The Google analytics service URL. */
-    const URL = 'https://www.googleapis.com/analytics/v3/data/ga';
 
     const
         /** */
-        BASE_NB_CHAR_GA_URL     = 300,
+        BASE_LENGTH_GA_URL     = 300,
 
         /** */
-        LIMIT_NB_CHAR_GA_URL    = 2000
+        LENGTH_LIMIT_GA_URL    = 2000
     ;
 
     /** @var string */
@@ -63,7 +47,6 @@ class Query
     /** @var integer */
     protected $maxResults;
 
-
     protected $baseUrlApi;
 
     /**
@@ -71,18 +54,14 @@ class Query
      *
      * @param string $ids The google analytics query ids.
      */
-    public function __construct($ids, $accessToken, $baseUrlApi)
+    public function __construct($ids, $baseUrlApi)
     {
-        $this->setIds($ids);
-        $this->accessToken = $accessToken;
-
-
+        $this->ids = $ids;
         $this->metrics = array("ga:pageviews");
         $this->startDate = new \DateTime('now -1 Month');
         $this->endDate = new \DateTime('now');
         $this->startIndex = 1;
         $this->maxResults = 10000;
-
         $this->baseUrlApi = $baseUrlApi;
     }
 
@@ -101,11 +80,23 @@ class Query
      *
      * @param string $ids The google analytics query ids.
      *
-     * @return \Widop\GoogleAnalytics\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
      */
     public function setIds($ids)
     {
         $this->ids = $ids;
+
+        return $this;
+    }
+
+    /**
+     * Gets the google analytics query ids.
+     *
+     * @return string The google analytics query ids.
+     */
+    public function setAccessToken($accessToken)
+    {
+        $this->accessToken = $accessToken;
 
         return $this;
     }
@@ -135,7 +126,7 @@ class Query
      *
      * @param \DateTime $startDate The google analytics query start date.
      *
-     * @return \Widop\GoogleAnalytics\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
      */
     public function setStartDate(\DateTime $startDate = null)
     {
@@ -159,7 +150,7 @@ class Query
      *
      * @param \DateTime $endDate The google analytics query end date.
      *
-     * @return \Widop\GoogleAnalytics\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
      */
     public function setEndDate(\DateTime $endDate = null)
     {
@@ -183,7 +174,7 @@ class Query
      *
      * @param array $metrics The google analytics query metrics.
      *
-     * @return \Widop\GoogleAnalytics\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
      */
     public function setMetrics(array $metrics)
     {
@@ -217,7 +208,7 @@ class Query
      *
      * @param array $dimensions The google analytics query dimensions.
      *
-     * @return \Widop\GoogleAnalytics\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
      */
     public function setDimensions(array $dimensions)
     {
@@ -251,7 +242,7 @@ class Query
      *
      * @param array $sorts The google analytics query sorts.
      *
-     * @return \Widop\GoogleAnalytics\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
      */
     public function setSorts(array $sorts)
     {
@@ -285,7 +276,7 @@ class Query
      *
      * @param array $filters The google analytics query filters.
      *
-     * @return \Widop\GoogleAnalytics\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
      */
     public function setFilters(array $filters, $mainSeparator = ',')
     {
@@ -320,7 +311,7 @@ class Query
      *
      * @param string $segment The google analytics query segment.
      *
-     * @return \Widop\GoogleAnalytics\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
      */
     public function setSegment($segment)
     {
@@ -344,7 +335,7 @@ class Query
      *
      * @param integer $startIndex The google analytics start index.
      *
-     * @return \Widop\GoogleAnalytics\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
      */
     public function setStartIndex($startIndex)
     {
@@ -368,13 +359,27 @@ class Query
      *
      * @param integer $maxResults The google analytics query max result count.
      *
-     * @return \Widop\GoogleAnalytics\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
      */
     public function setMaxResults($maxResults)
     {
         $this->maxResults = $maxResults;
 
         return $this;
+    }
+
+
+    public function setBaseUrlApi($baseUrlApi)
+    {
+        $this->baseUrlApi = $baseUrlApi;
+
+        return $this;
+    }
+
+
+    public function getBaseUrlApi()
+    {
+        return $this->baseUrlApi;
     }
 
     /**
@@ -384,7 +389,7 @@ class Query
      *
      * @return string The builded query.
      */
-    public function build()
+    public function generate()
     {
         $query = array(
             'ids'          => $this->getIds(),
@@ -412,40 +417,42 @@ class Query
             $query['filters'] = implode(',', $this->getFilters());
         }
 
-        return sprintf('%s?%s', $this->baseUrlApi, http_build_query($query));
+        return sprintf('%s?%s', $this->getBaseUrlApi(), http_build_query($query));
     }
 
     /**
      * @return array
      */
-    public function prepareForFilters()
+    public function build()
     {
-        $currentFilters     = $this->getFilters();
-        $baseUrlLength      = $this->getBaseUrlLengthWithoutFilters();
-        $currentUrlLength   = $baseUrlLength;
         $GARequestUrls      = array();
-        $filters            = array();
-        $filtersTmp         = array();
-        $idxFilter          = 0;
+        $currentFilters     = $this->getFilters();
 
         if(count($currentFilters) > 0) {
+
+            $baseUrlLength      = $this->getBaseUrlLengthWithoutFilters();
+            $currentUrlLength   = $baseUrlLength;
+            $filters            = array();
+            $filtersTmp         = array();
+            $idxFilter          = 0;
+
             foreach($currentFilters as $filter) {
 
                 // We fill the filters temp array in order to check the length of the url generate
                 $filtersTmp[] = $filter;
                 $this->setFilters($filtersTmp);
-                $currentUrlLength += strlen($this->build());
+                $currentUrlLength += strlen($this->generate());
 
                 // If the limit url length is reached, we keep in $GARequestUrls the url
-                if($currentUrlLength > self::LIMIT_NB_CHAR_GA_URL) {
+                if($currentUrlLength > self::LENGTH_LIMIT_GA_URL) {
 
                     // We set the filters array in order to generate the url that will be sent
                     $this->setFilters($filters);
-                    $GARequestUrls[] = $this->build();
+                    $GARequestUrls[] = $this->generate();
 
                     // Reset the current ur lLength with the $baseUrlLength and last filter
                     $this->setFilters($filter);
-                    $currentUrlLength = $baseUrlLength + strlen($this->build());
+                    $currentUrlLength = $baseUrlLength + strlen($this->generate());
 
                     // And reset all the var for the generation of the url length
                     $filters    = array();
@@ -457,23 +464,23 @@ class Query
                 $filters[] = $filter;
                 $idxFilter++;
             }
-            $GARequestUrls[] = $this->build();
         }
-        return $GARequestUrls;
 
+        $GARequestUrls[] = $this->generate();
+
+        return $GARequestUrls;
     }
 
     /**
-     * Get the base url length with the new params passed in the javascript call (Without filters)
+     * Get the base url length with initial parameters (Without filters)
      *
-     * @param $gaParams
      * @return int
      */
     private function getBaseUrlLengthWithoutFilters()
     {
         $filters = $this->getFilters();
         $this->setFilters(array());
-        $baseUrlLength = self::BASE_NB_CHAR_GA_URL + strlen($this->build());
+        $baseUrlLength = self::BASE_LENGTH_GA_URL + strlen($this->generate());
         $this->setFilters($filters);
 
         return $baseUrlLength;
