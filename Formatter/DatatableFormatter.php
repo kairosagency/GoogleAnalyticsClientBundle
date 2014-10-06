@@ -4,12 +4,24 @@ namespace Kairos\GoogleAnalyticsClientBundle\Formatter;
 
 class DatatableFormatter
 {
+    /** @var  */
+    protected $label;
+
+    /** @var  */
+    protected $date;
+
+    /** @var  */
+    protected $number;
 
     /**
-     * convert data to DataTableJson format
+     * Convert data to DataTableJson format
+     *
      * @param $data
+     * @param array $label
+     * @return array
      */
     public function toDataTable($data, $label = array()) {
+
         //reset date and number array;
         $this->date = null;
         $this->number = array();
@@ -32,15 +44,15 @@ class DatatableFormatter
 
     /**
      * Sanitize datatypes for use in datatable
-     * format the cols for use in datatable
+     * Format the cols for use in datatable
      *
      * @param $key
      * @param $col
      * @return array
      */
-    public function convertCol($key, $col) {
+    public function convertCol($key, $col)
+    {
         $res = array();
-
         if($col['dataType'] == "INTEGER") {
             $res['type'] = "number";
             $this->number[] = $key;
@@ -50,7 +62,6 @@ class DatatableFormatter
         }
 
         $label = $this->label;
-
         $res['label'] = isset($label[$col['name']]) ? $label[$col['name']] : $col['name'] ;
         $res['id'] = $col['name'];
 
@@ -63,12 +74,13 @@ class DatatableFormatter
     }
 
     /**
-     * sanitize row for use in datatable
+     * Sanitize row for use in datatable
      *
      * @param $row
      * @return array
      */
-    public function convertRow ($row) {
+    public function convertRow ($row)
+    {
         $res = array();
         foreach($row AS $key => $value) {
             if($key === $this->date) {
