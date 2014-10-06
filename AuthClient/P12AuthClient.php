@@ -3,7 +3,7 @@
 namespace Kairos\GoogleAnalyticsClientBundle\AuthClient;
 
 use Doctrine\Common\Cache\Cache;
-use Guzzle\Http\Client;
+use Guzzle\Http\Client as HttpClient;
 use Kairos\GoogleAnalyticsClientBundle\Exception\GoogleAnalyticsException;
 
 /**
@@ -45,6 +45,11 @@ class P12AuthClient extends AbstractAuthClient
      * @var integer
      */
     protected $cacheTTL;
+
+    /**
+     *
+     */
+    const SCOPE = 'https://www.googleapis.com/auth/analytics.readonly';
 
 
     /**
@@ -91,7 +96,7 @@ class P12AuthClient extends AbstractAuthClient
             'assertion'  => $this->generateJsonWebToken(),
         );
 
-        $client = new Client();
+        $client = new HttpClient();
         $request = $client->post($url, $headers, $content);
         $response = $request->send();
 
@@ -121,7 +126,7 @@ class P12AuthClient extends AbstractAuthClient
             json_encode(
                 array(
                     'iss'   => $this->clientEmail,
-                    'scope' => 'https://www.googleapis.com/auth/analytics.readonly',
+                    'scope' => self::SCOPE,
                     'aud'   => $url,
                     'exp'   => $exp->getTimestamp(),
                     'iat'   => $iat->getTimestamp(),
