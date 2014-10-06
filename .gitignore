@@ -1,3 +1,6 @@
+index.php
+/vendor/
+
 #exclude osx and phpstorm files
 .DS_Store
 /.idea/*
