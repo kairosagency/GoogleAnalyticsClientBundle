@@ -2,7 +2,7 @@
 
 namespace Kairos\GoogleAnalyticsClientBundle\Formatter;
 
-class Datatable
+class DatatableFormatter
 {
 
     /**
