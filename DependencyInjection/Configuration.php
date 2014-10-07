@@ -37,15 +37,13 @@ class Configuration implements ConfigurationInterface
 
             ->children()
                 ->arrayNode('oauth')
-                    ->addDefaultsIfNotSet()
-                    ->canBeUnset()
-                        ->children()
-                            ->scalarNode('base_url')->defaultValue('https://accounts.google.com')->end()
-                            ->scalarNode('token_end_point')->defaultValue('/o/oauth2/token')->end()
-                            ->scalarNode('client_email')->isRequired()->cannotBeEmpty()->end()
-                            ->scalarNode('private_key')->isRequired()->cannotBeEmpty()->end()
-                            ->scalarNode('base_url_api')->defaultValue('https://www.googleapis.com/analytics/v3/data/ga')->end()
-                        ->end()
+                    ->addDefaultsIfNotSet()->canBeUnset()->end()
+                    ->children()
+                        ->scalarNode('base_url')->defaultValue('https://accounts.google.com')->end()
+                        ->scalarNode('token_end_point')->defaultValue('/o/oauth2/token')->end()
+                        ->scalarNode('client_email')->isRequired()->cannotBeEmpty()->end()
+                        ->scalarNode('private_key')->isRequired()->cannotBeEmpty()->end()
+                        ->scalarNode('base_url_api')->defaultValue('https://www.googleapis.com/analytics/v3/data/ga')->end()
                     ->end()
                 ->end()
             ->end()
@@ -53,7 +51,8 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->scalarNode('cache_provider')->end()
             ->end()
-        ;
+
+        ->end();
 
         return $treeBuilder;
     }
