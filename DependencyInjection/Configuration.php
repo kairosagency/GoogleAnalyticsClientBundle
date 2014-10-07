@@ -48,7 +48,11 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-            ->end();
+            ->end()
+
+            ->children()
+                ->scalarNode('cache_provider')->end()
+            ->end()
         ;
 
         return $treeBuilder;

@@ -24,8 +24,9 @@ class KairosGoogleAnalyticsClientExtension extends Extension
 
         $this->remapParametersNamespaces($config, $container, array(
                 '' => array(
-                    'gapi_id'       => 'kairos_google_analytics_client.gapi_id',
-                    'gapi_account'  => 'kairos_google_analytics_client.gapi_account'
+                    'gapi_id'           => 'kairos_google_analytics_client.gapi_id',
+                    'gapi_account'      => 'kairos_google_analytics_client.gapi_account',
+                    'cache_provider'    => 'kairos_google_analytics_client.cache_provider'
                 ),
 
                 'oauth' => array(
