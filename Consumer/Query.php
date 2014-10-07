@@ -2,16 +2,17 @@
 
 namespace Kairos\GoogleAnalyticsClientBundle\Consumer;
 
+/**
+ * Class Query
+ * @package Kairos\GoogleAnalyticsClientBundle\Consumer
+ */
 class Query
 {
+    /** Estimation of the base length of a Googla analytics request url */
+    const BASE_LENGTH_GA_URL = 300;
 
-    const
-        /** */
-        BASE_LENGTH_GA_URL     = 300,
-
-        /** */
-        LENGTH_LIMIT_GA_URL    = 2000
-    ;
+    /** Length limit of a Google analytics request url */
+    const LENGTH_LIMIT_GA_URL = 2000;
 
     /** @var string */
     protected $ids;
@@ -47,6 +48,7 @@ class Query
     /** @var integer */
     protected $maxResults;
 
+    /** @var string Base url for Google Analytics API */
     protected $baseUrlApi;
 
     /**
@@ -272,18 +274,29 @@ class Query
     }
 
     /**
-     * Sets the google analytics query filters.
+     * Sets the google analytics query filters and filters separator.
      *
      * @param array $filters The google analytics query filters.
+     * @param string $filtersSeparator The google analytics query filters separator.
      *
      * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
      */
-    public function setFilters(array $filters, $mainSeparator = ',')
+    public function setFilters(array $filters, $filtersSeparator = ',')
     {
         $this->filters = $filters;
-        $this->mainSeparator = $mainSeparator;
+        $this->filtersSeparator = $filtersSeparator;
 
         return $this;
+    }
+
+    /**
+     * Gets the google analytics query filters separator.
+     *
+     * @return string The google analytics query filters separator.
+     */
+    public function getFiltersSeparator()
+    {
+        return $this->filtersSeparator;
     }
 
     /**
@@ -383,7 +396,7 @@ class Query
     }
 
     /**
-     * Builds the query.
+     * Generate a request url.
      *
      * @param string $accessToken The access token used to build the query.
      *
@@ -414,29 +427,32 @@ class Query
         }
 
         if ($this->hasFilters()) {
-            $query['filters'] = implode(',', $this->getFilters());
+            $query['filters'] = implode($this->getFiltersSeparator(), $this->getFilters());
         }
 
         return sprintf('%s?%s', $this->getBaseUrlApi(), http_build_query($query));
     }
 
     /**
+     * Checks how many url will be needed to get data from Google Analytics API
+     * and build an array with the request urls.
+     *
      * @return array
      */
     public function build()
     {
-        $GARequestUrls      = array();
-        $currentFilters     = $this->getFilters();
+        $GARequestUrls = array();
+        $currentFilters = $this->getFilters();
 
-        if(count($currentFilters) > 0) {
+        if (count($currentFilters) > 0) {
 
-            $baseUrlLength      = $this->getBaseUrlLengthWithoutFilters();
-            $currentUrlLength   = $baseUrlLength;
-            $filters            = array();
-            $filtersTmp         = array();
-            $idxFilter          = 0;
+            $baseUrlLength = $this->getBaseLengthUrlGAWithoutFilters();
+            $currentUrlLength = $baseUrlLength;
+            $filters = array();
+            $filtersTmp = array();
+            $idxFilter = 0;
 
-            foreach($currentFilters as $filter) {
+            foreach ($currentFilters as $filter) {
 
                 // We fill the filters temp array in order to check the length of the url generate
                 $filtersTmp[] = $filter;
@@ -444,7 +460,7 @@ class Query
                 $currentUrlLength += strlen($this->generate());
 
                 // If the limit url length is reached, we keep in $GARequestUrls the url
-                if($currentUrlLength > self::LENGTH_LIMIT_GA_URL) {
+                if ($currentUrlLength > self::LENGTH_LIMIT_GA_URL) {
 
                     // We set the filters array in order to generate the url that will be sent
                     $this->setFilters($filters);
@@ -455,9 +471,9 @@ class Query
                     $currentUrlLength = $baseUrlLength + strlen($this->generate());
 
                     // And reset all the var for the generation of the url length
-                    $filters    = array();
+                    $filters = array();
                     $filtersTmp = array();
-                    $idxFilter  = 0;
+                    $idxFilter = 0;
                 }
 
                 // We fill the official filters array
@@ -472,11 +488,11 @@ class Query
     }
 
     /**
-     * Get the base url length with initial parameters (Without filters)
+     * Gets the base url length with initial parameters (without filters).
      *
      * @return int
      */
-    private function getBaseUrlLengthWithoutFilters()
+    private function getBaseLengthUrlGAWithoutFilters()
     {
         $filters = $this->getFilters();
         $this->setFilters(array());

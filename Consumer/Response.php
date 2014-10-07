@@ -2,9 +2,10 @@
 
 namespace Kairos\GoogleAnalyticsClientBundle\Consumer;
 
-use Kairos\GoogleAnalyticsClientBundle\Formatter\CSVFormatter;
-use Kairos\GoogleAnalyticsClientBundle\Formatter\DatatableFormatter;
-
+/**
+ * Class Response
+ * @package Kairos\GoogleAnalyticsClientBundle\Consumer
+ */
 class Response
 {
     /** @var array */
@@ -12,6 +13,9 @@ class Response
 
     /** @var array */
     protected $totalsForAllResults;
+
+    /** @var integer */
+    protected $totalResults;
 
     /**
      * @param array $response
@@ -23,9 +27,15 @@ class Response
         if (isset($response['totalsForAllResults'])) {
             $this->totalsForAllResults = $response['totalsForAllResults'];
         }
+
+        if (isset($response['totalResults'])) {
+            $this->totalResults = $response['totalResults'];
+        }
     }
 
     /**
+     * Gets the raw reponse given by Google Analytics.
+     *
      * @return array
      */
     public function getRawResponse()
@@ -44,23 +54,12 @@ class Response
     }
 
     /**
-     * Convert data to DataTableJson format
+     * Gets the total number of results.
      *
-     * @return array
+     * @return integer The total number of results.
      */
-    public function toDataTable()
+    public function getTotalResults()
     {
-        $datatableFormatter = new DatatableFormatter();
-        return $datatableFormatter->toDataTable($this->rawResponse);
-    }
-
-
-    /**
-     * @return bool|\Symfony\Component\HttpFoundation\Response
-     */
-    public function toCSV()
-    {
-        $CSVFormatter = new CSVFormatter();
-        return $CSVFormatter->toCSV($this->rawResponse);
+        return $this->totalResults;
     }
 }
