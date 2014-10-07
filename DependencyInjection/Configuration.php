@@ -49,7 +49,7 @@ class Configuration implements ConfigurationInterface
             ->end()
 
             ->children()
-                ->scalarNode('cache_provider')->end()
+                ->scalarNode('cache_provider_id')->end()
             ->end()
 
         ->end();

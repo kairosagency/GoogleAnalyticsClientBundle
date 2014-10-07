@@ -26,7 +26,7 @@ class KairosGoogleAnalyticsClientExtension extends Extension
                 '' => array(
                     'gapi_id'           => 'kairos_google_analytics_client.gapi_id',
                     'gapi_account'      => 'kairos_google_analytics_client.gapi_account',
-                    'cache_provider'    => 'kairos_google_analytics_client.cache_provider'
+                    'cache_provider_id' => 'kairos_google_analytics_client.cache_provider_id'
                 ),
 
                 'oauth' => array(
