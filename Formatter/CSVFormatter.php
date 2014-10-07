@@ -2,9 +2,20 @@
 
 namespace Kairos\GoogleAnalyticsClientBundle\Formatter;
 
+/**
+ * Class CSVFormatter
+ * @package Kairos\GoogleAnalyticsClientBundle\Formatter
+ */
 class CSVFormatter
 {
-    public function toCSV(array $response)
+    /**
+     * CSV export of the reponse given by Google Analytics.
+     *
+     * @param array $response
+     *
+     * @return bool|\Symfony\Component\HttpFoundation\Response
+     */
+    public static function toCSV(array $response)
     {
         $keyDate = null;
 
@@ -13,12 +24,12 @@ class CSVFormatter
 
         // Set the header of the CSV
         $csvHeader = array();
-        if(isset($response['columnHeaders']) && count($response['columnHeaders']) > 0) {
-            foreach($response['columnHeaders'] as $keyHead => $head) {
+        if (isset($response['columnHeaders']) && count($response['columnHeaders']) > 0) {
+            foreach ($response['columnHeaders'] as $keyHead => $head) {
                 $csvHeader[] = $head['name'];
 
                 // if the header is date, set key
-                if(strpos($head['name'], 'date') !== false) {
+                if (strpos($head['name'], 'date') !== false) {
                     $keyDate = $keyHead;
                 }
             }
@@ -26,16 +37,15 @@ class CSVFormatter
         $file->fputcsv($csvHeader);
 
         // Set the content of the CSV
-        if(isset($response['rows']) && count($response['rows']) > 0) {
-            foreach($response['rows'] as $row) {
+        if (isset($response['rows']) && count($response['rows']) > 0) {
+            foreach ($response['rows'] as $row) {
                 $rowValue = array();
-                foreach($row as $keyValue => $value) {
+                foreach ($row as $keyValue => $value) {
 
                     // if the header key is date, format date
-                    if($keyValue === $keyDate) {
+                    if ($keyValue === $keyDate) {
                         $rowValue[] = date('Y-m-d', strtotime($value));
-                    }
-                    else {
+                    } else {
                         $rowValue[] = $value;
                     }
                 }
