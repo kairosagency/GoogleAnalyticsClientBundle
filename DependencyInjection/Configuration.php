@@ -37,7 +37,7 @@ class Configuration implements ConfigurationInterface
 
             ->children()
                 ->arrayNode('oauth')
-                    ->addDefaultsIfNotSet()->canBeUnset()->end()
+                    ->addDefaultsIfNotSet()->canBeUnset()
                     ->children()
                         ->scalarNode('base_url')->defaultValue('https://accounts.google.com')->end()
                         ->scalarNode('token_end_point')->defaultValue('/o/oauth2/token')->end()
