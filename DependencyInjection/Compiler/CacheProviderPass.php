@@ -28,7 +28,7 @@ class CacheProviderPass implements CompilerPassInterface
         }
 
         /** If there is no custom cache provider in the config we init a default cache provider */
-        $defaultCacheProvider = new Definition('%kairos_google_analytics_client.default_cache_provider.class%', array($container->getParameter('%kernel.root_dir%/cache')));
+        $defaultCacheProvider = new Definition('%kairos_google_analytics_client.default_cache_provider.class%', array($container->getParameter('%kernel.root_dir%') . '/cache'));
         $container->setDefinition('kairos_google_analytics_client.cache_provider', $defaultCacheProvider);
     }
 }
