@@ -37,6 +37,8 @@ class Query
 
     /** @var array */
     protected $filters;
+
+    /** @var string */
     protected $filtersSeparator;
 
     /** @var string */
