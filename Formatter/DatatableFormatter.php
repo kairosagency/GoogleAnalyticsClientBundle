@@ -128,5 +128,4 @@ class DatatableFormatter
         }
         return array('c' => $res);
     }
-
 }

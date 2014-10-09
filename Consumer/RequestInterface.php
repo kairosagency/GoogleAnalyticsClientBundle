@@ -22,20 +22,4 @@ interface RequestInterface
      * @return array
      */
     public function getResult();
-
-    /**
-     * Check if the data has pagination and gets all the data if there is a pagination.
-     *
-     * @return array
-     */
-    protected function getGAResult();
-
-    /**
-     * Merge all the datas in the basic format.
-     *
-     * @param $results
-     *
-     * @return array
-     */
-    protected function mergeResults($results);
 }
