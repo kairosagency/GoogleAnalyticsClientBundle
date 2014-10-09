@@ -56,7 +56,7 @@ class Query implements QueryInterface
     /**
      * Creates a google analytics query.
      *
-     * @param string $ids The google analytics query ids.
+     * @param array $ids The google analytics query ids.
      */
     public function __construct(array $ids, $baseUrlApi)
     {
@@ -72,7 +72,7 @@ class Query implements QueryInterface
     /**
      * Gets the google analytics query ids.
      *
-     * @return string The google analytics query ids.
+     * @return array The google analytics query ids.
      */
     public function getIds()
     {
@@ -111,9 +111,11 @@ class Query implements QueryInterface
     }
 
     /**
-     * Gets the google analytics query ids.
+     * Sets the google analytics access token.
      *
-     * @return string The google analytics query ids.
+     * @param string $accessToken
+     *
+     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
      */
     public function setAccessToken($accessToken)
     {
@@ -123,9 +125,9 @@ class Query implements QueryInterface
     }
 
     /**
-     * Gets the google analytics query ids.
+     * Gets the google analytics access token.
      *
-     * @return string The google analytics query ids.
+     * @return string The google analytics access token.
      */
     public function getAccessToken()
     {
@@ -480,8 +482,6 @@ class Query implements QueryInterface
 
     /**
      * Generate a request url.
-     *
-     * @param string $accessToken The access token used to build the query.
      *
      * @return string The builded query.
      */

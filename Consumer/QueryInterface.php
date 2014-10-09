@@ -11,9 +11,16 @@ interface QueryInterface
     /**
      * Gets the google analytics query ids.
      *
-     * @return string The google analytics query ids.
+     * @return array The google analytics query ids.
      */
     public function getIds();
+
+    /**
+     * Normalize the ids to this format ga:xxxx,ga:xxxx
+     *
+     * @return string The google analytics query ids.
+     */
+    public function normalizeIds();
 
     /**
      * Sets the google analytics query ids.
@@ -25,16 +32,18 @@ interface QueryInterface
     public function setIds(array $ids);
 
     /**
-     * Gets the google analytics query ids.
+     * Sets the google analytics access token.
      *
-     * @return string The google analytics query ids.
+     * @param string $accessToken
+     *
+     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
      */
     public function setAccessToken($accessToken);
 
     /**
-     * Gets the google analytics query ids.
+     * Gets the google analytics access token.
      *
-     * @return string The google analytics query ids.
+     * @return string The google analytics access token.
      */
     public function getAccessToken();
 
@@ -162,6 +171,7 @@ interface QueryInterface
      * @return string The google analytics query filters separator.
      */
     public function getFiltersSeparator();
+
     /**
      * Checks of the google analytics query has a segment.
      *
@@ -218,13 +228,18 @@ interface QueryInterface
     public function setMaxResults($maxResults);
 
     /**
-     * @param $baseUrlApi
-     * @return mixed
+     * Sets the google analytics base url api.
+     *
+     * @param string $baseUrlApi
+     *
+     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
      */
     public function setBaseUrlApi($baseUrlApi);
 
     /**
-     * @return mixed
+     * Gets the google analytics base url api.
+     *
+     * @return string
      */
     public function getBaseUrlApi();
 

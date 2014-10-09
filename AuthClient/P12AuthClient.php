@@ -24,7 +24,7 @@ class P12AuthClient extends AbstractAuthClient
     /** @var string */
     protected $clientEmail;
 
-    /** @var p12 Certificate P12 file for google analytics */
+    /** @var string Certificate P12 file path for google analytics */
     protected $privateKey;
 
     /** @var \Doctrine\Common\Cache\Cache */
@@ -41,7 +41,7 @@ class P12AuthClient extends AbstractAuthClient
      * @param string $baseUrl
      * @param string $tokenEndPoint
      * @param string $clientEmail
-     * @param p12 $privateKey
+     * @param string $privateKey
      * @param int $cacheTTL
      */
     public function __construct(

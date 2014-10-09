@@ -24,7 +24,7 @@ class Request implements RequestInterface
     /**
      * Constructor which initialize the query access token with the auth client.
      *
-     * @param Query $query
+     * @param QueryInterface $query
      * @param AuthClientInterface $authClient
      */
     public function __construct(QueryInterface $query, AuthClientInterface $authClient)
@@ -47,7 +47,7 @@ class Request implements RequestInterface
     /**
      * Send http request to Googla analytics and gets the response.
      *
-     * @param $requestUrl
+     * @param string $requestUrl
      *
      * @throws \Kairos\GoogleAnalyticsClientBundle\Exception\GoogleAnalyticsException
      *
@@ -140,7 +140,7 @@ class Request implements RequestInterface
      *
      * @param \Guzzle\Http\Client $httpClient
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\AuthClient\P12AuthClient
+     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Request
      */
     public function setHttpClient(HttpClient $httpClient)
     {
