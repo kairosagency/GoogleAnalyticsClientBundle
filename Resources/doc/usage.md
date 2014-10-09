@@ -3,7 +3,7 @@
 ## Get your credentials ##
 
 As you have read in the README, the library allows you to request the google analytics service without user interaction.
-In order to make it possible, you need to create a [Google Service Account](https://developers.google.com/console/help/new/#usingkeys).
+In order to make it possible, you need to create a [Google Service Account](https://code.google.com/apis/console/) and [get your credentials](https://developers.google.com/console/help/new/#usingkeys).
 
 At the end, you should have:
 
@@ -21,7 +21,8 @@ $container->get('kairos_google_analytics_client.p12_auth_client');
 
 ## Query ##
 
-You can have a look to the [Google Api Reference](https://developers.google.com/analytics/devguides/reporting/core/v3/reference) in order to see the value that you can use
+You can have a look to the [Google Api Reference](https://developers.google.com/analytics/devguides/reporting/core/v3/reference)
+in order to see the value that you can use
 
 ``` php
 use Kairos\GoogleAnalyticsClientBundle\Consumer\Query;
@@ -33,7 +34,7 @@ $query = new Query($profileId, $baseUrlApi);
 // Default values :)
 $query->setMetrics(array('ga:pageviews'));
 $query->setStartDate(new \DateTime('now -1 Month'));
-$query->setEndDate(new \DateTime('now));
+$query->setEndDate(new \DateTime('now'));
 $query->setStartIndex(1);
 $query->setMaxResults(10000);
 
@@ -72,7 +73,7 @@ $request->getResult()
 
 ## Reponse/Formatters ##
 
-The response object provides manipulation of data, if you need to get the (raw data...)
+The response object provides manipulation of data, if you need to get the (raw data...).
 We defines some formatters in order to provides some others functions
 
 ``` php
