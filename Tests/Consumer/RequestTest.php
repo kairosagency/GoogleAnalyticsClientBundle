@@ -35,8 +35,5 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->object->setHttpClient($this->httpClient);
     }
 
-    public function testGetResult()
-    {
-
-    }
+    public function testGetResult(){}
 }
