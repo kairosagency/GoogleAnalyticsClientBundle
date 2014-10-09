@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="./Tests/bootstrap.php" colors="true">
+<phpunit bootstrap="./Tests/autoload.php.dist" colors="true" topOnFailure="false">
     <testsuites>
-        <testsuite name="Kairos GoogleAnalyticsClientBundle test suite">
+        <testsuite name="Kairos Google Analytics client bundle test suite">
             <directory suffix="Test.php">./Tests</directory>
         </testsuite>
     </testsuites>
@@ -9,7 +9,6 @@
         <whitelist>
             <directory>./</directory>
             <exclude>
-                <directory>./Resources</directory>t
                 <directory>./Tests</directory>
                 <directory>./vendor</directory>
             </exclude>

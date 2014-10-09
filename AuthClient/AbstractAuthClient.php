@@ -8,16 +8,10 @@ namespace Kairos\GoogleAnalyticsClientBundle\AuthClient;
  */
 abstract class AbstractAuthClient implements AuthClientInterface
 {
-    /**
-     * @var \Doctrine\Common\Cache\Cache
-     */
+    /** @var \Doctrine\Common\Cache\Cache */
     protected $cacheProvider;
 
-    /**
-     * Lifetime parameter for the cache provider
-     *
-     * @var integer
-     */
+    /** @var int Lifetime parameter for the cache provider */
     protected $cacheTTL;
 
     /**
