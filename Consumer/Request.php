@@ -12,7 +12,7 @@ use Kairos\GoogleAnalyticsClientBundle\Exception\GoogleAnalyticsException;
  */
 class Request implements RequestInterface
 {
-    /** @var \Kairos\GoogleAnalyticsClientBundle\Consumer\Query */
+    /** @var \Kairos\GoogleAnalyticsClientBundle\Consumer\QueryInterface */
     protected $query;
 
     /** @var \Kairos\GoogleAnalyticsClientBundle\AuthClient\AuthClientInterface */

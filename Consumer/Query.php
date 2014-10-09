@@ -430,7 +430,7 @@ class Query implements QueryInterface
      * Checks how many url will be needed to get data from Google Analytics API
      * and build an array with the request urls.
      *
-     * @return array
+     * @return string[]
      */
     public function build()
     {
