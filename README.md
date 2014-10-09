@@ -40,7 +40,7 @@ class AppKernel extends Kernel
 
 Config for your config.yml :
 
-```json
+```
 kairos_google_analytics_client:
     gapi_id: xxx
     gapi_account: xxx
@@ -51,8 +51,9 @@ kairos_google_analytics_client:
 
 ### Usage ###
 
+[Usage](https://github.com/kairosagency/GoogleAnalyticsClientBundle/blob/master/Resources/doc/usage.md)
 
-### Todo ###
+### Todos ###
 
 * Add Tests
 
