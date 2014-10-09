@@ -18,6 +18,9 @@ class Request
     /** @var \Kairos\GoogleAnalyticsClientBundle\AuthClient\AuthClientInterface */
     protected $authClient;
 
+    /** @var \Guzzle\Http\Client */
+    protected $httpClient;
+
     /**
      * Constructor which initialize the query access token with the auth client.
      *
@@ -28,8 +31,41 @@ class Request
     {
         $this->authClient = $authClient;
         $this->query = $query;
+        $this->setHttpClient(new HttpClient());
 
         $this->query->setAccessToken($this->authClient->getAccessToken());
+    }
+
+    /**
+     * @return array
+     */
+    public function getResult()
+    {
+        return $this->mergeResults($this->getGAResult());
+    }
+
+    /**
+     * Sets an http client in order to make google analytics request.
+     *
+     * @param \Guzzle\Http\Client $httpClient
+     *
+     * @return \Kairos\GoogleAnalyticsClientBundle\AuthClient\P12AuthClient
+     */
+    public function setHttpClient(HttpClient $httpClient)
+    {
+        $this->httpClient = $httpClient;
+
+        return $this;
+    }
+
+    /**
+     * Gets an http client in order to make google analytics request.
+     *
+     * @return \Guzzle\Http\Client $httpClient
+     */
+    public function getHttpClient()
+    {
+        return $this->httpClient;
     }
 
     /**
@@ -37,12 +73,13 @@ class Request
      *
      * @param $requestUrl
      *
-     * @return mixed
      * @throws \Kairos\GoogleAnalyticsClientBundle\Exception\GoogleAnalyticsException
+     *
+     * @return mixed
      */
-    public function request($requestUrl)
+    protected function request($requestUrl)
     {
-        $client = new HttpClient();
+        $client = $this->getHttpClient();
         $request = $client->get($requestUrl);
         $response = $request->send();
 
@@ -53,14 +90,6 @@ class Request
         $data = json_decode($response->getBody(), true);
 
         return $data;
-    }
-
-    /**
-     * @return array
-     */
-    public function getResult()
-    {
-        return $this->mergeResults($this->getGAResult());
     }
 
     /**

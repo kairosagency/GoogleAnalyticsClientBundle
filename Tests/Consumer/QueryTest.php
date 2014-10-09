@@ -166,5 +166,4 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         $this->baseUrlApi = null;
         $this->object = null;
     }
-
 }
