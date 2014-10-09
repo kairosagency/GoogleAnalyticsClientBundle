@@ -14,7 +14,7 @@ class Query
     /** Length limit of a Google analytics request url */
     const LENGTH_LIMIT_GA_URL = 2000;
 
-    /** @var string */
+    /** @var array */
     protected $ids;
 
     /** @var string */
@@ -58,7 +58,7 @@ class Query
      *
      * @param string $ids The google analytics query ids.
      */
-    public function __construct($ids, $baseUrlApi)
+    public function __construct(array $ids, $baseUrlApi)
     {
         $this->ids = $ids;
         $this->metrics = array("ga:pageviews");
@@ -80,13 +80,30 @@ class Query
     }
 
     /**
+     * Normalize the ids to this format ga:xxxx,ga:xxxx
+     *
+     * @return string The google analytics query ids.
+     */
+    public function normalizeIds()
+    {
+        $ids = '';
+        if(!empty($this->ids)) {
+            foreach($this->ids as $key => $id) {
+                if($key > 0) { $ids .= ','; }
+                $ids .= 'ga:' . $id;
+            }
+        }
+        return $ids;
+    }
+
+    /**
      * Sets the google analytics query ids.
      *
      * @param string $ids The google analytics query ids.
      *
      * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
      */
-    public function setIds($ids)
+    public function setIds(array $ids)
     {
         $this->ids = $ids;
 
@@ -383,7 +400,13 @@ class Query
         return $this;
     }
 
-
+    /**
+     * Sets the google analytics base url api.
+     *
+     * @param string $baseUrlApi
+     *
+     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     */
     public function setBaseUrlApi($baseUrlApi)
     {
         $this->baseUrlApi = $baseUrlApi;
@@ -391,48 +414,14 @@ class Query
         return $this;
     }
 
-
+    /**
+     * Gets the google analytics base url api.
+     *
+     * @return string
+     */
     public function getBaseUrlApi()
     {
         return $this->baseUrlApi;
-    }
-
-    /**
-     * Generate a request url.
-     *
-     * @param string $accessToken The access token used to build the query.
-     *
-     * @return string The builded query.
-     */
-    public function generate()
-    {
-        $query = array(
-            'ids'          => $this->getIds(),
-            'access_token' => $this->getAccessToken(),
-            'metrics'      => implode(',', $this->getMetrics()),
-            'start-date'   => $this->getStartDate()->format('Y-m-d'),
-            'end-date'     => $this->getEndDate()->format('Y-m-d'),
-            'start-index'  => $this->getStartIndex(),
-            'max-results'  => $this->getMaxResults(),
-        );
-
-        if ($this->hasSegment()) {
-            $query['segment'] = $this->getSegment();
-        }
-
-        if ($this->hasDimensions()) {
-            $query['dimensions'] = implode(',', $this->getDimensions());
-        }
-
-        if ($this->hasSorts()) {
-            $query['sort'] = implode(',', $this->getSorts());
-        }
-
-        if ($this->hasFilters()) {
-            $query['filters'] = implode($this->getFiltersSeparator(), $this->getFilters());
-        }
-
-        return sprintf('%s?%s', $this->getBaseUrlApi(), http_build_query($query));
     }
 
     /**
@@ -487,6 +476,44 @@ class Query
         $GARequestUrls[] = $this->generate();
 
         return $GARequestUrls;
+    }
+
+    /**
+     * Generate a request url.
+     *
+     * @param string $accessToken The access token used to build the query.
+     *
+     * @return string The builded query.
+     */
+    protected function generate()
+    {
+        $query = array(
+            'ids'          => $this->normalizeIds(),
+            'access_token' => $this->getAccessToken(),
+            'metrics'      => implode(',', $this->getMetrics()),
+            'start-date'   => $this->getStartDate()->format('Y-m-d'),
+            'end-date'     => $this->getEndDate()->format('Y-m-d'),
+            'start-index'  => $this->getStartIndex(),
+            'max-results'  => $this->getMaxResults(),
+        );
+
+        if ($this->hasSegment()) {
+            $query['segment'] = $this->getSegment();
+        }
+
+        if ($this->hasDimensions()) {
+            $query['dimensions'] = implode(',', $this->getDimensions());
+        }
+
+        if ($this->hasSorts()) {
+            $query['sort'] = implode(',', $this->getSorts());
+        }
+
+        if ($this->hasFilters()) {
+            $query['filters'] = implode($this->getFiltersSeparator(), $this->getFilters());
+        }
+
+        return sprintf('%s?%s', $this->getBaseUrlApi(), http_build_query($query));
     }
 
     /**
