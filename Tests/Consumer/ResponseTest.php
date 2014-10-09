@@ -1,6 +1,6 @@
 <?php
 
-namespace Kairos\GoogleAnalyticsClientBundle\Tests;
+namespace Kairos\GoogleAnalyticsClientBundle\Tests\Consumer;
 
 use Kairos\GoogleAnalyticsClientBundle\Consumer\Response;
 

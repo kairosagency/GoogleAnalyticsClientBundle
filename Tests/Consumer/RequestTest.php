@@ -1,6 +1,6 @@
 <?php
 
-namespace Kairos\GoogleAnalyticsClientBundle\Tests;
+namespace Kairos\GoogleAnalyticsClientBundle\Tests\Consumer;
 
 use Kairos\GoogleAnalyticsClientBundle\Consumer\Request;
 
@@ -35,32 +35,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->object->setHttpClient($this->httpClient);
     }
 
-    public function test()
-    {}
-
-    /*public function testGetResult()
+    public function testGetResult()
     {
-        $urls = array('https://url1');
-        $this->query->expects($this->once())
-            ->method('build')
-            ->will($this->returnValue($urls));
 
-
-
-        $httpResponse = $this->getMockBuilder('Guzzle\Http\Message\Response')->disableOriginalConstructor()->getMock();
-        $httpResponse->expects($this->once())
-            ->method('getBody')
-            ->will($this->returnValue(json_encode(array('access_token' => 'response_access_token'))));
-
-        $httpRequest = $this->getMock('Guzzle\Http\Message\RequestInterface');
-        $httpRequest->expects($this->once())
-            ->method('send')
-            ->will($this->returnValue($httpResponse));
-
-        $this->httpClient->expects($this->once())
-            ->method('get')
-            ->with('https://url1')
-            ->will($this->returnValue($httpRequest));
-
-    }*/
+    }
 }

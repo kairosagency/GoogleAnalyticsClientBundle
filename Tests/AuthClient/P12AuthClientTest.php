@@ -1,6 +1,6 @@
 <?php
 
-namespace Kairos\GoogleAnalyticsClientBundle\Tests;
+namespace Kairos\GoogleAnalyticsClientBundle\Tests\AuthClient;
 
 use Kairos\GoogleAnalyticsClientBundle\AuthClient\P12AuthClient;
 

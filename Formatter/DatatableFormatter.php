@@ -2,6 +2,10 @@
 
 namespace Kairos\GoogleAnalyticsClientBundle\Formatter;
 
+/**
+ * Class DatatableFormatter
+ * @package Kairos\GoogleAnalyticsClientBundle\Formatter
+ */
 class DatatableFormatter
 {
     /** @var array */
@@ -52,7 +56,6 @@ class DatatableFormatter
      */
     public function toDataTable(array $response, $label = array())
     {
-
         //reset date and number array;
         $this->date = null;
         $this->number = array();
