@@ -1,0 +1,20 @@
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="kairos_google_analytics_client.default_cache_provider.class">Doctrine\Common\Cache\PhpFileCache</parameter>
+        <parameter key="kairos_google_analytics_client.p12_auth_client.class">Kairos\GoogleAnalyticsClientBundle\AuthClient\P12AuthClient</parameter>
+    </parameters>
+
+    <services>
+        <service id="kairos_google_analytics_client.p12_auth_client" class="%kairos_google_analytics_client.p12_auth_client.class%">
+            <argument type="service" id="kairos_google_analytics_client.cache_provider" />
+            <argument>%kairos_google_analytics_client.oauth.base_url%</argument>
+            <argument>%kairos_google_analytics_client.oauth.token_end_point%</argument>
+            <argument>%kairos_google_analytics_client.oauth.client_email%</argument>
+            <argument>%kairos_google_analytics_client.oauth.private_key%</argument>
+            <argument>%kernel.root_dir%</argument>
+        </service>
+    </services>
+</container>
