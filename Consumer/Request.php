@@ -10,7 +10,7 @@ use Kairos\GoogleAnalyticsClientBundle\Exception\GoogleAnalyticsException;
  * Class Request
  * @package Kairos\GoogleAnalyticsClientBundle\Consumers
  */
-class Request
+class Request implements RequestInterface
 {
     /** @var \Kairos\GoogleAnalyticsClientBundle\Consumer\Query */
     protected $query;
@@ -27,7 +27,7 @@ class Request
      * @param Query $query
      * @param AuthClientInterface $authClient
      */
-    public function __construct(Query $query, AuthClientInterface $authClient)
+    public function __construct(QueryInterface $query, AuthClientInterface $authClient)
     {
         $this->authClient = $authClient;
         $this->query = $query;
@@ -42,30 +42,6 @@ class Request
     public function getResult()
     {
         return $this->mergeResults($this->getGAResult());
-    }
-
-    /**
-     * Sets an http client in order to make google analytics request.
-     *
-     * @param \Guzzle\Http\Client $httpClient
-     *
-     * @return \Kairos\GoogleAnalyticsClientBundle\AuthClient\P12AuthClient
-     */
-    public function setHttpClient(HttpClient $httpClient)
-    {
-        $this->httpClient = $httpClient;
-
-        return $this;
-    }
-
-    /**
-     * Gets an http client in order to make google analytics request.
-     *
-     * @return \Guzzle\Http\Client $httpClient
-     */
-    public function getHttpClient()
-    {
-        return $this->httpClient;
     }
 
     /**
@@ -157,5 +133,29 @@ class Request
             }
         }
         return $mergedResults;
+    }
+
+    /**
+     * Sets an http client in order to make google analytics request.
+     *
+     * @param \Guzzle\Http\Client $httpClient
+     *
+     * @return \Kairos\GoogleAnalyticsClientBundle\AuthClient\P12AuthClient
+     */
+    public function setHttpClient(HttpClient $httpClient)
+    {
+        $this->httpClient = $httpClient;
+
+        return $this;
+    }
+
+    /**
+     * Gets an http client in order to make google analytics request.
+     *
+     * @return \Guzzle\Http\Client $httpClient
+     */
+    public function getHttpClient()
+    {
+        return $this->httpClient;
     }
 }

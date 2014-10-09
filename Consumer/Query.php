@@ -6,7 +6,7 @@ namespace Kairos\GoogleAnalyticsClientBundle\Consumer;
  * Class Query
  * @package Kairos\GoogleAnalyticsClientBundle\Consumer
  */
-class Query
+class Query implements QueryInterface
 {
     /** Estimation of the base length of a Googla analytics request url */
     const BASE_LENGTH_GA_URL = 300;

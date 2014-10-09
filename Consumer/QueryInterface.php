@@ -22,7 +22,7 @@ interface QueryInterface
      *
      * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
      */
-    public function setIds($ids);
+    public function setIds(array $ids);
 
     /**
      * Gets the google analytics query ids.
@@ -227,15 +227,6 @@ interface QueryInterface
      * @return mixed
      */
     public function getBaseUrlApi();
-
-    /**
-     * Generate a request url.
-     *
-     * @param string $accessToken The access token used to build the query.
-     *
-     * @return string The builded query.
-     */
-    public function generate();
 
     /**
      * Checks how many url will be needed to get data from Google Analytics API

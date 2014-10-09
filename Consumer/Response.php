@@ -6,7 +6,7 @@ namespace Kairos\GoogleAnalyticsClientBundle\Consumer;
  * Class Response
  * @package Kairos\GoogleAnalyticsClientBundle\Consumer
  */
-class Response
+class Response implements ResponseInterface
 {
     /** @var array */
     protected $rawResponse;
