@@ -2,6 +2,8 @@
 
 namespace Kairos\GoogleAnalyticsClientBundle\Formatter;
 
+use Kairos\GoogleAnalyticsClientBundle\File\SplTempFileObject;
+
 /**
  * Class CSVFormatter
  * @package Kairos\GoogleAnalyticsClientBundle\Formatter
@@ -20,7 +22,7 @@ class CSVFormatter
         $keyDate = null;
 
         // Use the php memory to create the file
-        $file = new \SplTempFileObject();
+        $file = new SplTempFileObject();
 
         // Set the header of the CSV
         $csvHeader = array();
