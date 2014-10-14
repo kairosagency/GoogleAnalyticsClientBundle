@@ -460,7 +460,7 @@ class Query implements QueryInterface
                     $GARequestUrls[] = $this->generate();
 
                     // Reset the current ur lLength with the $baseUrlLength and last filter
-                    $this->setFilters($filter);
+                    $this->setFilters(array($filter));
                     $currentUrlLength = $baseUrlLength + strlen($this->generate());
 
                     // And reset all the var for the generation of the url length
