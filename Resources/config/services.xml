@@ -5,6 +5,7 @@
     <parameters>
         <parameter key="kairos_google_analytics_client.default_cache_provider.class">Doctrine\Common\Cache\PhpFileCache</parameter>
         <parameter key="kairos_google_analytics_client.p12_auth_client.class">Kairos\GoogleAnalyticsClientBundle\AuthClient\P12AuthClient</parameter>
+        <parameter key="kairos_google_analytics_client.formatter.datatable.class">Kairos\GoogleAnalyticsClientBundle\Formatter\DatatableFormatter</parameter>
     </parameters>
 
     <services>
@@ -14,6 +15,9 @@
             <argument>%kairos_google_analytics_client.oauth.token_end_point%</argument>
             <argument>%kairos_google_analytics_client.oauth.client_email%</argument>
             <argument>%kairos_google_analytics_client.oauth.private_key%</argument>
+        </service>
+
+        <service id="kairos_google_analytics_client.formatter.datatable" class="%kairos_google_analytics_client.formatter.datatable.class%">
         </service>
     </services>
 </container>
