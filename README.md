@@ -1,4 +1,5 @@
 # Google Analytics Client Bundle #
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/kairosagency/GoogleAnalyticsClientBundle?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![Build Status](https://travis-ci.org/kairosagency/GoogleAnalyticsClientBundle.svg?branch=develop)](https://travis-ci.org/kairosagency/GoogleAnalyticsClientBundle)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kairosagency/GoogleAnalyticsClientBundle/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/kairosagency/GoogleAnalyticsClientBundle/?branch=develop)
