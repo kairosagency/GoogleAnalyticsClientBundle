@@ -53,10 +53,10 @@ class Request implements RequestInterface
      *
      * @return mixed
      */
-    protected function request($requestUrl)
+    protected function request($baseUrl, $params)
     {
         $client = $this->getHttpClient();
-        $request = $client->get($requestUrl);
+        $request = $client->get($baseUrl, array(), array('query' => $params));
         $response = $request->send();
 
         if ($response->getStatusCode() != 200) {
@@ -75,19 +75,36 @@ class Request implements RequestInterface
      */
     protected function getGAResult()
     {
+        $count =  10;
+        $start = microtime();
+
         $results = array();
         $requestUrls = $this->query->build();
-
-        foreach ($requestUrls as $url) {
-
-            $data = $this->request($url);
+        foreach ($requestUrls as $queryParams) {
+            $data = $this->request($this->query->getBaseUrlApi(), $queryParams);
+            $count--;
             $results[] = $data;
 
             $startIndex = $data['query']['start-index'] + 1;
             while (($data['totalResults'] >= $startIndex * $data['query']['max-results'])) {
-                $this->query->setStartIndex($startIndex);
-                $results[] = $this->query->build();
+                $subQueryParams = clone($queryParams);
+                $subQueryParams['start-index'] = $startIndex;
+                $results[] = $this->request($this->query->getBaseUrlApi(), $subQueryParams->build());
+                $count--;
+                unset($subQueryParams);
                 $startIndex++;
+                if($count === 0) {
+                    $dt = 1000000-(microtime() - $start);
+                    if($dt > 0)
+                        usleep($dt);
+                }
+            }
+
+            // if we do 10 requests in less than 1 second, we wait a little bit to match google api rate limit
+            if($count === 0) {
+                $dt = 1000000-(microtime() - $start);
+                if($dt > 0)
+                    usleep($dt);
             }
         }
 

@@ -54,6 +54,20 @@ class Query implements QueryInterface
     protected $baseUrlApi;
 
     /**
+     * ip of user to get through rate limit
+     * @var string
+     */
+    protected $userIp;
+
+    /**
+     * id of user to get through rate limit
+     * @var string
+     */
+    protected $quotaUser;
+
+
+
+    /**
      * Creates a google analytics query.
      *
      * @param array $ids The google analytics query ids.
@@ -427,6 +441,58 @@ class Query implements QueryInterface
     }
 
     /**
+     * @param $ip
+     * @return $this
+     */
+    public function setUserIp($userIp)
+    {
+        $this->userIp = $userIp;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUserIp()
+    {
+        return $this->userIp;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasUserIp()
+    {
+        return !is_null($this->userIp);
+    }
+
+    /**
+     * @param $user
+     * @return $this
+     */
+    public function setQuotaUser($quotaUser)
+    {
+        $this->quotaUser = $quotaUser;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getQuotaUser()
+    {
+        return $this->quotaUser;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasQuotaUser()
+    {
+        return !is_null($this->quotaUser);
+    }
+
+    /**
      * Checks how many url will be needed to get data from Google Analytics API
      * and build an array with the request urls.
      *
@@ -450,7 +516,7 @@ class Query implements QueryInterface
                 // We fill the filters temp array in order to check the length of the url generate
                 $filtersTmp[] = $filter;
                 $this->setFilters($filtersTmp);
-                $currentUrlLength += strlen($this->generate());
+                $currentUrlLength += $this->queryLength($this->generate());
 
                 // If the limit url length is reached, we keep in $GARequestUrls the url
                 if ($currentUrlLength > self::LENGTH_LIMIT_GA_URL) {
@@ -461,7 +527,7 @@ class Query implements QueryInterface
 
                     // Reset the current ur lLength with the $baseUrlLength and last filter
                     $this->setFilters(array($filter));
-                    $currentUrlLength = $baseUrlLength + strlen($this->generate());
+                    $currentUrlLength = $baseUrlLength + $this->queryLength($this->generate());
 
                     // And reset all the var for the generation of the url length
                     $filters = array();
@@ -497,6 +563,14 @@ class Query implements QueryInterface
             'max-results'  => $this->getMaxResults(),
         );
 
+        if ($this->hasQuotaUser()) {
+            $query['quotaUser'] = $this->getQuotaUser();
+        }
+
+        if ($this->hasUserIp()) {
+            $query['userIp'] = $this->getUserIp();
+        }
+
         if ($this->hasSegment()) {
             $query['segment'] = $this->getSegment();
         }
@@ -513,7 +587,26 @@ class Query implements QueryInterface
             $query['filters'] = implode($this->getFiltersSeparator(), $this->getFilters());
         }
 
+        //return sprintf('%s?%s', $this->getBaseUrlApi(), http_build_query($query));
+        return $query;
+    }
+
+    /**
+     * @param array $query
+     * @return string
+     */
+    public function queryToString(array $query)
+    {
         return sprintf('%s?%s', $this->getBaseUrlApi(), http_build_query($query));
+    }
+
+    /**
+     * @param array $query
+     * @return int
+     */
+    public function queryLength(array $query)
+    {
+        return strlen($this->queryToString($query));
     }
 
     /**
@@ -525,7 +618,7 @@ class Query implements QueryInterface
     {
         $filters = $this->getFilters();
         $this->setFilters(array());
-        $baseUrlLength = self::BASE_LENGTH_GA_URL + strlen($this->generate());
+        $baseUrlLength = self::BASE_LENGTH_GA_URL + $this->queryLength($this->generate());
         $this->setFilters($filters);
 
         return $baseUrlLength;

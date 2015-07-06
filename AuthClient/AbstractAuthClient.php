@@ -14,6 +14,7 @@ abstract class AbstractAuthClient implements AuthClientInterface
     /** @var int Lifetime parameter for the cache provider */
     protected $cacheTTL;
 
+
     /**
      * Get the google access token from cache/google
      *
@@ -32,6 +33,7 @@ abstract class AbstractAuthClient implements AuthClientInterface
             return $accessToken;
         }
     }
+
 
     /**
      * Generate a unique key depending on parameters
