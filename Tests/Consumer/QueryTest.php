@@ -147,14 +147,27 @@ class QueryTest extends \PHPUnit_Framework_TestCase
         $this->object->setStartIndex(10);
         $this->object->setMaxResults(100);
         $this->object->setAccessToken('access_token');
+        $this->object->setUserIp('192.168.1.2');
+
 
         $expected = array(
-            'https://base_url_api?ids=ga%3Afoo%2Cga%3Abar&access_token=access_token&' .
-            'metrics=m1%2Cm2&start-date=2013-01-01&end-date=2013-01-31&start-index=10&max-results=100&' .
-            'segment=seg&dimensions=d1%2Cd2&sort=s1%2Cs2&filters=f1%2Cf2'
+            array(
+                'ids' => 'ga:foo,ga:bar',
+                'start-date' => '2013-01-01',
+                'end-date' => '2013-01-31',
+                'metrics' => 'm1,m2',
+                'dimensions' => 'd1,d2',
+                'sort' => 's1,s2',
+                'filters' => 'f1,f2',
+                'segment'  => 'seg',
+                'start-index'  => 10,
+                'max-results'  => 100,
+                'access_token'  => 'access_token',
+                'userIp'  => '192.168.1.2',
+            )
         );
 
-        $this->assertSame($expected, $this->object->build());
+        $this->assertEquals($expected, $this->object->build());
     }
 
     /**
