@@ -81,7 +81,7 @@ class Request implements RequestInterface
      */
     protected function getGAResult()
     {
-        $start = microtime();
+        $start = microtime(true);
 
         $results = array();
         $requestUrls = $this->query->build();
@@ -103,10 +103,11 @@ class Request implements RequestInterface
                 $this->userIpTable[$subQueryParams['userIp']]--;
                 $startIndex++;
                 if($this->userIpTable[$subQueryParams['userIp']] === 0) {
-                    $dt = 1000000-(microtime() - $start);
+                    $dt = 1000000-(microtime(true) - $start);
                     if($dt > 0) {
                         usleep($dt);
                         $this->userIpTable[$subQueryParams['userIp']] = 10;
+                        $start = microtime(true);
                     }
                 }
                 unset($subQueryParams);
@@ -114,10 +115,11 @@ class Request implements RequestInterface
 
             // if we do 10 requests in less than 1 second, we wait a little bit to match google api rate limit
             if($this->userIpTable[$queryParams['userIp']] === 0) {
-                $dt = 1000000-(microtime() - $start);
+                $dt = 1000000-(microtime(true) - $start);
                 if($dt > 0) {
                     usleep($dt);
                     $this->userIpTable[$queryParams['userIp']] = 10;
+                    $start = microtime(true);
                 }
             }
         }
