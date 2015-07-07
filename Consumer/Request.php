@@ -22,6 +22,11 @@ class Request implements RequestInterface
     protected $httpClient;
 
     /**
+     * @var array
+     */
+    protected $userIpTable;
+
+    /**
      * Constructor which initialize the query access token with the auth client.
      *
      * @param QueryInterface $query
@@ -32,6 +37,7 @@ class Request implements RequestInterface
         $this->authClient = $authClient;
         $this->query = $query;
         $this->setHttpClient(new HttpClient());
+        $this->userIpTable = array();
 
         $this->query->setAccessToken($this->authClient->getAccessToken());
     }
@@ -75,38 +81,48 @@ class Request implements RequestInterface
      */
     protected function getGAResult()
     {
-        $count =  10;
         $start = microtime();
 
         $results = array();
         $requestUrls = $this->query->build();
         foreach ($requestUrls as $queryParams) {
+
+            if(isset($queryParams['userIp']) && !isset($this->userIpTable[$queryParams['userIp']])) {
+                $this->userIpTable[$queryParams['userIp']] = 10;
+            }
+
             $data = $this->request($this->query->getBaseUrlApi(), $queryParams);
-            $count--;
+            $this->userIpTable[$queryParams['userIp']]--;
             $results[] = $data;
 
-            $startIndex = $data['query']['start-index'] + 1;
+            $startIndex = $data['query']['start-index'];
             while (($data['totalResults'] >= $startIndex * $data['query']['max-results'])) {
-                $subQueryParams = clone($queryParams);
+                $subQueryParams = $queryParams;
                 $subQueryParams['start-index'] = $startIndex;
-                $results[] = $this->request($this->query->getBaseUrlApi(), $subQueryParams->build());
-                $count--;
-                unset($subQueryParams);
+                $results[] = $this->request($this->query->getBaseUrlApi(), $subQueryParams);
+                $this->userIpTable[$subQueryParams['userIp']]--;
                 $startIndex++;
-                if($count === 0) {
+                if($this->userIpTable[$subQueryParams['userIp']] === 0) {
                     $dt = 1000000-(microtime() - $start);
-                    if($dt > 0)
+                    if($dt > 0) {
                         usleep($dt);
+                        $this->userIpTable[$subQueryParams['userIp']] = 10;
+                    }
                 }
+                unset($subQueryParams);
             }
 
             // if we do 10 requests in less than 1 second, we wait a little bit to match google api rate limit
-            if($count === 0) {
+            if($this->userIpTable[$queryParams['userIp']] === 0) {
                 $dt = 1000000-(microtime() - $start);
-                if($dt > 0)
+                if($dt > 0) {
                     usleep($dt);
+                    $this->userIpTable[$queryParams['userIp']] = 10;
+                }
             }
         }
+
+        $this->userIpTable = array();
 
         return $results;
     }
