@@ -3,23 +3,38 @@
     "type": "library",
     "license": "LGPL-3.0",
     "description": "Symfony 2 bundle. Get data from google analytics",
-    "keywords": ["php-ga","google-analytics", "client", "ga collect data"],
+    "keywords": [
+        "php-ga",
+        "google-analytics",
+        "client",
+        "ga collect data"
+    ],
     "homepage": "https://github.com/kairosagency/GoogleAnalyticsClientBundle",
     "authors": [
-        {"name": "t0k4rt", "email": "assouad@kairostag.com", "homepage": "https://github.com/t0k4rt"},
-        {"name": "Matthiew", "email": "faule@kairostag.com", "homepage": "https://github.com/Matthiew"}
+        {
+            "name": "t0k4rt",
+            "email": "assouad@kairostag.com",
+            "homepage": "https://github.com/t0k4rt"
+        },
+        {
+            "name": "Matthiew",
+            "email": "faule@kairostag.com",
+            "homepage": "https://github.com/Matthiew"
+        }
     ],
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=5.5.0",
         "symfony/framework-bundle": "~2.1",
-        "doctrine/cache" : "~1.3",
-        "guzzle/guzzle": "~3.0"
+        "doctrine/cache": "~1.3",
+        "guzzlehttp/guzzle": "~6.0",
+        "symfony/monolog-bundle": "~2.4"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.2"
+        "phpunit/phpunit": "~4.2",
+        "phpspec/prophecy": "~1.0"
     },
     "autoload": {
-        "psr-0": { "Kairos\\GoogleAnalyticsClientBundle": "" }
+        "psr-0": {"Kairos\\GoogleAnalyticsClientBundle": ""}
     },
     "target-dir": "Kairos/GoogleAnalyticsClientBundle"
 }

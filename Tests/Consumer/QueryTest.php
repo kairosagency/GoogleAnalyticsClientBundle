@@ -2,11 +2,11 @@
 
 namespace Kairos\GoogleAnalyticsClientBundle\Tests\Consumer;
 
-use Kairos\GoogleAnalyticsClientBundle\Consumer\Query;
+use Kairos\GoogleAnalyticsClientBundle\Query\Query;
 
 class QueryTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \Kairos\GoogleAnalyticsClientBundle\Consumer\Query */
+    /** @var \Kairos\GoogleAnalyticsClientBundle\Query\Query */
     protected $object;
 
     /** @var array */

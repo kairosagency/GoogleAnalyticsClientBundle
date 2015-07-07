@@ -1,6 +1,6 @@
 <?php
 
-namespace Kairos\GoogleAnalyticsClientBundle\Consumer;
+namespace Kairos\GoogleAnalyticsClientBundle\Query;
 
 /**
  * Class QueryInterface
@@ -27,7 +27,7 @@ interface QueryInterface
      *
      * @param string $ids The google analytics query ids.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setIds(array $ids);
 
@@ -36,7 +36,7 @@ interface QueryInterface
      *
      * @param string $accessToken
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setAccessToken($accessToken);
 
@@ -59,7 +59,7 @@ interface QueryInterface
      *
      * @param \DateTime $startDate The google analytics query start date.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setStartDate(\DateTime $startDate = null);
 
@@ -75,7 +75,7 @@ interface QueryInterface
      *
      * @param \DateTime $endDate The google analytics query end date.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setEndDate(\DateTime $endDate = null);
 
@@ -91,7 +91,7 @@ interface QueryInterface
      *
      * @param array $metrics The google analytics query metrics.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setMetrics(array $metrics);
 
@@ -114,7 +114,7 @@ interface QueryInterface
      *
      * @param array $dimensions The google analytics query dimensions.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setDimensions(array $dimensions);
 
@@ -137,7 +137,7 @@ interface QueryInterface
      *
      * @param array $sorts The google analytics query sorts.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setSorts(array $sorts);
 
@@ -161,7 +161,7 @@ interface QueryInterface
      * @param array $filters The google analytics query filters.
      * @param string $filtersSeparator The google analytics query filters separator.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setFilters(array $filters, $filtersSeparator = ',');
 
@@ -191,7 +191,7 @@ interface QueryInterface
      *
      * @param string $segment The google analytics query segment.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setSegment($segment);
 
@@ -207,7 +207,7 @@ interface QueryInterface
      *
      * @param integer $startIndex The google analytics start index.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setStartIndex($startIndex);
 
@@ -223,7 +223,7 @@ interface QueryInterface
      *
      * @param integer $maxResults The google analytics query max result count.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setMaxResults($maxResults);
 
@@ -232,7 +232,7 @@ interface QueryInterface
      *
      * @param string $baseUrlApi
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setBaseUrlApi($baseUrlApi);
 
@@ -242,6 +242,38 @@ interface QueryInterface
      * @return string
      */
     public function getBaseUrlApi();
+
+    /**
+     * @param $ip
+     * @return $this
+     */
+    public function setUserIp($userIp);
+
+    /**
+     * @return mixed
+     */
+    public function getUserIp();
+
+    /**
+     * @return bool
+     */
+    public function hasUserIp();
+    /**
+     * @param $user
+     * @return $this
+     */
+    public function setQuotaUser($quotaUser);
+
+    /**
+     * @return mixed
+     */
+    public function getQuotaUser();
+
+    /**
+     * @return bool
+     */
+    public function hasQuotaUser();
+
 
     /**
      * Checks how many url will be needed to get data from Google Analytics API

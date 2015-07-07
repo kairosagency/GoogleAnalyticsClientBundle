@@ -1,12 +1,13 @@
 <?php
 
-namespace Kairos\GoogleAnalyticsClientBundle\Consumer;
+namespace Kairos\GoogleAnalyticsClientBundle\Response;
+
 
 /**
- * Class Response
- * @package Kairos\GoogleAnalyticsClientBundle\Consumer
+ * Class GoogleAnalyticsResponse
+ * @package Kairos\GoogleAnalyticsClientBundle\Response
  */
-class Response implements ResponseInterface
+class GoogleAnalyticsResponse implements GoogleAnalyticsResponseInterface
 {
     /** @var array */
     protected $rawResponse;

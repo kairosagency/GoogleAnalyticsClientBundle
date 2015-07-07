@@ -2,20 +2,20 @@
 
 namespace Kairos\GoogleAnalyticsClientBundle\Tests\Consumer;
 
-use Kairos\GoogleAnalyticsClientBundle\Consumer\Request;
+use Kairos\GoogleAnalyticsClientBundle\Request\GoogleAnalyticsRequest;
 
 class RequestTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \Kairos\GoogleAnalyticsClientBundle\Consumer\QueryInterface */
+    /** @var \Kairos\GoogleAnalyticsClientBundle\Query\QueryInterface */
     protected $query;
 
-    /** @var \Kairos\GoogleAnalyticsClientBundle\AuthClient\AuthClientInterface */
+    /** @var \Kairos\GoogleAnalyticsClientBundle\AuthProvider\AuthClientInterface */
     protected $authClient;
 
-    /** @var \Guzzle\Http\Client */
+    /** @var \GuzzleHttp\Client */
     protected $httpClient;
 
-    /** @var \Kairos\GoogleAnalyticsClientBundle\Consumer\Request */
+    /** @var \Kairos\GoogleAnalyticsClientBundle\Request\GoogleAnalyticsRequest */
     protected $object;
 
     /**
@@ -23,16 +23,13 @@ class RequestTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->query = $this->getMock('Kairos\GoogleAnalyticsClientBundle\Consumer\QueryInterface');
-        $this->httpClient = $this->getMock('Guzzle\Http\Client');
+        $this->query = $this->prophesize('Kairos\GoogleAnalyticsClientBundle\Query\QueryInterface');
+        $this->httpClient = $this->prophesize('GuzzleHttp\Client');
+        $this->authClient = $this->prophesize('Kairos\GoogleAnalyticsClientBundle\AuthProvider\AuthClientInterface');
+        $this->authClient->getAccessToken()
+            ->willReturn('access_token');
 
-        $this->authClient = $this->getMock('Kairos\GoogleAnalyticsClientBundle\AuthClient\AuthClientInterface');
-        $this->authClient->expects($this->once())
-            ->method('getAccessToken')
-            ->will($this->returnValue('access_token'));
-
-        $this->object = new Request($this->query, $this->authClient);
-        $this->object->setHttpClient($this->httpClient);
+        $this->object = new GoogleAnalyticsRequest($this->authClient->reveal());
     }
 
     public function testGetResult(){}

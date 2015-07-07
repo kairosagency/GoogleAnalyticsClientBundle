@@ -1,12 +1,12 @@
 <?php
 
-namespace Kairos\GoogleAnalyticsClientBundle\Consumer;
+namespace Kairos\GoogleAnalyticsClientBundle\Response;
 
 /**
- * Class ResponseInterface
- * @package Kairos\GoogleAnalyticsClientBundle\Consumer
+ * Interface GoogleAnalyticsResponseInterface
+ * @package Kairos\GoogleAnalyticsClientBundle\Response
  */
-interface ResponseInterface
+interface GoogleAnalyticsResponseInterface
 {
     /**
      * Gets the raw reponse given by Google Analytics.

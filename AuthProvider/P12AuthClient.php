@@ -1,9 +1,10 @@
 <?php
 
-namespace Kairos\GoogleAnalyticsClientBundle\AuthClient;
+namespace Kairos\GoogleAnalyticsClientBundle\AuthProvider;
 
 use Doctrine\Common\Cache\Cache;
-use Guzzle\Http\Client as HttpClient;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
 use Kairos\GoogleAnalyticsClientBundle\Exception\GoogleAnalyticsException;
 
 /**
@@ -33,7 +34,9 @@ class P12AuthClient extends AbstractAuthClient
     /** @var int Lifetime parameter for the cache provider */
     protected $cacheTTL;
 
-    /** @var \Guzzle\Http\Client */
+    /**
+     * @var Client
+     */
     protected $httpClient;
 
     /**
@@ -52,12 +55,12 @@ class P12AuthClient extends AbstractAuthClient
         $privateKey,
         $cacheTTL = 3600
     ) {
-        $this->setCacheProvider($cacheProvider);
-        $this->setHttpClient(new HttpClient());
-        $this->setUrl($baseUrl . $tokenEndPoint);
-        $this->setClientEmail($clientEmail);
-        $this->setPrivateKey($privateKey);
-        $this->setCacheTTL($cacheTTL);
+        $this->cacheProvider = $cacheProvider;
+        $this->httpClient = new Client();
+        $this->url = $baseUrl . $tokenEndPoint;
+        $this->clientEmail = $clientEmail;
+        $this->privateKey = $privateKey;
+        $this->cacheTTL = $cacheTTL;
     }
 
     /**
@@ -65,12 +68,11 @@ class P12AuthClient extends AbstractAuthClient
      *
      * @param Cache $cacheProvider
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\AuthClient\P12AuthClient
+     * @return \Kairos\GoogleAnalyticsClientBundle\AuthProvider\P12AuthClient
      */
     public function setCacheProvider(Cache $cacheProvider)
     {
         $this->cacheProvider = $cacheProvider;
-
         return $this;
     }
 
@@ -86,12 +88,11 @@ class P12AuthClient extends AbstractAuthClient
 
     /**
      * Sets an http client in order to make google analytics request.
-     *
-     * @param \Guzzle\Http\Client $httpClient
-     *
-     * @return \Kairos\GoogleAnalyticsClientBundle\AuthClient\P12AuthClient
+
+     * @param Client $httpClient
+     * @return $this
      */
-    public function setHttpClient(HttpClient $httpClient)
+    public function setHttpClient(Client $httpClient)
     {
         $this->httpClient = $httpClient;
 
@@ -101,7 +102,7 @@ class P12AuthClient extends AbstractAuthClient
     /**
      * Gets an http client in order to make google analytics request.
      *
-     * @return \Guzzle\Http\Client $httpClient
+     * @return Client
      */
     public function getHttpClient()
     {
@@ -113,7 +114,7 @@ class P12AuthClient extends AbstractAuthClient
      *
      * @param string $clientEmail The client email.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\AuthClient\P12AuthClient
+     * @return \Kairos\GoogleAnalyticsClientBundle\AuthProvider\P12AuthClient
      */
     public function setClientEmail($clientEmail)
     {
@@ -137,7 +138,7 @@ class P12AuthClient extends AbstractAuthClient
      *
      * @param string $url The google analytics service url.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\AuthClient\P12AuthClient
+     * @return \Kairos\GoogleAnalyticsClientBundle\AuthProvider\P12AuthClient
      */
     public function setUrl($url)
     {
@@ -161,7 +162,7 @@ class P12AuthClient extends AbstractAuthClient
      *
      * @param int $cacheTTL Lifetime parameter for the cache provider.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\AuthClient\P12AuthClient
+     * @return \Kairos\GoogleAnalyticsClientBundle\AuthProvider\P12AuthClient
      */
     public function setCacheTTL($cacheTTL)
     {
@@ -187,7 +188,7 @@ class P12AuthClient extends AbstractAuthClient
      *
      * @throws \Kairos\GoogleAnalyticsClientBundle\Exception\GoogleAnalyticsException If the private key does not exist.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\AuthClient\P12AuthClient
+     * @return \Kairos\GoogleAnalyticsClientBundle\AuthProvider\P12AuthClient
      */
     public function setPrivateKey($privateKey)
     {
@@ -228,16 +229,14 @@ class P12AuthClient extends AbstractAuthClient
      */
     protected function requestAccessToken()
     {
-        $headers = array('Content-Type' => 'application/x-www-form-urlencoded');
-        $content = array(
-            'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-            'assertion'  => $this->generateJsonWebToken(),
-        );
-
-        $client = $this->getHttpClient();
-        $request = $client->post($this->getUrl(), $headers, $content);
-        $response = $request->send();
-
+        $response = $this->getHttpClient()->post(
+            $this->getUrl(),
+            array(
+            'form_params' => array(
+                'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                'assertion'  => $this->generateJsonWebToken(),
+            )
+        ));
         $response = json_decode($response->getBody());
 
         if (isset($response->error)) {

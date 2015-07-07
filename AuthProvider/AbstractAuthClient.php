@@ -1,6 +1,6 @@
 <?php
 
-namespace Kairos\GoogleAnalyticsClientBundle\AuthClient;
+namespace Kairos\GoogleAnalyticsClientBundle\AuthProvider;
 
 /**
  * Class AbstractAuthClient

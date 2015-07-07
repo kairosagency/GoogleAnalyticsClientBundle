@@ -2,14 +2,14 @@
 
 namespace Kairos\GoogleAnalyticsClientBundle\Tests\Consumer;
 
-use Kairos\GoogleAnalyticsClientBundle\Consumer\Response;
+use Kairos\GoogleAnalyticsClientBundle\Response\GoogleAnalyticsResponse;
 
 class ResponseTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetRawResponse()
     {
         $response = array('foo', 'bar');
-        $obj = new Response($response);
+        $obj = new GoogleAnalyticsResponse($response);
 
         $this->assertSame($response, $obj->getRawResponse());
     }
@@ -17,7 +17,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
     public function testGetTFAR()
     {
         $response = array('foo', 'totalsForAllResults' => 100);
-        $obj = new Response($response);
+        $obj = new GoogleAnalyticsResponse($response);
 
         $this->assertSame(100, $obj->getTotalsForAllResults());
     }
@@ -25,7 +25,7 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
     public function testGetTR()
     {
         $response = array('foo', 'totalResults' => 10000);
-        $obj = new Response($response);
+        $obj = new GoogleAnalyticsResponse($response);
 
         $this->assertSame(10000, $obj->getTotalResults());
     }

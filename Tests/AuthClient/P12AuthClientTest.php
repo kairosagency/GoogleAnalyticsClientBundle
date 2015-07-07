@@ -2,7 +2,8 @@
 
 namespace Kairos\GoogleAnalyticsClientBundle\Tests\AuthClient;
 
-use Kairos\GoogleAnalyticsClientBundle\AuthClient\P12AuthClient;
+use Kairos\GoogleAnalyticsClientBundle\AuthProvider\P12AuthClient;
+use Prophecy\Argument;
 
 /**
  * Class P12AuthClientTest
@@ -25,28 +26,28 @@ class P12AuthClientTest extends \PHPUnit_Framework_TestCase
     /** @var p12 file */
     protected $privateKey;
 
-    /** @var \Guzzle\Http\Client */
+    /** @var \GuzzleHttp\Client */
     protected $httpClient;
 
     /** @var int */
     protected $cacheTTL;
 
-    /** @var \Kairos\GoogleAnalyticsClientBundle\AuthClient\P12AuthClient */
+    /** @var \Kairos\GoogleAnalyticsClientBundle\AuthProvider\P12AuthClient */
     protected $object;
 
     /** Init the object App */
     protected function setUp()
     {
-        $this->cacheProvider = $this->getMock('Doctrine\Common\Cache\Cache');
-        $this->httpClient = $this->getMock('Guzzle\Http\Client');
+        $this->cacheProvider = $this->prophesize('Doctrine\Common\Cache\Cache');
+        $this->httpClient = $this->prophesize('GuzzleHttp\Client');
         $this->baseUrl = 'https://base_url';
         $this->tokenEndPoint = '/token_end_point';
         $this->clientEmail = 'client_email';
         $this->privateKey = __DIR__ . '/Fixtures/certificate.p12';
         $this->cacheTTL = 3600;
 
-        $this->object = new P12AuthClient($this->cacheProvider, $this->baseUrl, $this->tokenEndPoint, $this->clientEmail, $this->privateKey);
-        $this->object->setHttpClient($this->httpClient);
+        $this->object = new P12AuthClient($this->cacheProvider->reveal(), $this->baseUrl, $this->tokenEndPoint, $this->clientEmail, $this->privateKey);
+        $this->object->setHttpClient($this->httpClient->reveal());
     }
 
     public function testConstructor()
@@ -55,72 +56,52 @@ class P12AuthClientTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($this->clientEmail, $this->object->getClientEmail());
         $this->assertSame($this->baseUrl . $this->tokenEndPoint, $this->object->getUrl());
         $this->assertSame($this->privateKey, $this->object->getPrivateKey());
-        $this->assertInstanceOf('Guzzle\Http\Client', $this->object->getHttpClient());
+        $this->assertInstanceOf('GuzzleHttp\Client', $this->object->getHttpClient());
         $this->assertSame($this->cacheTTL, $this->object->getCacheTTL());
     }
 
     public function testAccessTokenNotCached()
     {
-        $this->cacheProvider->expects($this->once())
-            ->method('contains')
-            ->with($this->equalTo(md5($this->clientEmail)))
-            ->will($this->returnValue(false));
+        $this->cacheProvider->contains(md5($this->clientEmail))
+            ->shouldBeCalled()
+            ->willReturn(false);
 
-        $this->cacheProvider->expects($this->once())
-            ->method('save')
-            ->with(
-                $this->equalTo(md5($this->clientEmail)),
-                $this->equalTo('response_access_token'),
-                3600
-            )
-            ->will($this->returnValue('response_access_token'));
+        $this->cacheProvider->save(md5($this->clientEmail), 'response_access_token', 3600)
+            ->shouldBeCalled()
+            ->willReturn('response_access_token');
 
         if (!function_exists('openssl_x509_read')) {
             $this->markTestSkipped('The "openssl_x509_read" function is not available.');
         }
 
-        $httpResponse = $this->getMockBuilder('Guzzle\Http\Message\Response')->disableOriginalConstructor()->getMock();
-        $httpResponse->expects($this->once())
-            ->method('getBody')
-            ->will($this->returnValue(json_encode(array('access_token' => 'response_access_token'))));
+        $httpResponse = $this->prophesize('Psr\Http\Message\ResponseInterface');
+        $httpResponse->getBody()->shouldBeCalled()
+            ->willReturn(json_encode(array('access_token' => 'response_access_token')));
 
-        $httpRequest = $this->getMock('Guzzle\Http\Message\RequestInterface');
-        $httpRequest->expects($this->once())
-            ->method('send')
-            ->will($this->returnValue($httpResponse));
-
-        $this->httpClient->expects($this->once())
-            ->method('post')
-            ->with(
-                $this->equalTo($this->baseUrl . $this->tokenEndPoint),
-                $this->equalTo(array('Content-Type' => 'application/x-www-form-urlencoded'))
-            )
-            ->will($this->returnValue($httpRequest));
+        $this->httpClient->post($this->baseUrl . $this->tokenEndPoint, Argument::type('array'))
+            ->willReturn($httpResponse);
 
         $this->assertSame('response_access_token', $this->object->getAccessToken());
     }
 
     public function testAccessTokenCached()
     {
-        $this->cacheProvider->expects($this->once())
-            ->method('contains')
-            ->with($this->equalTo(md5($this->clientEmail)))
-            ->will($this->returnValue(true));
+        $this->cacheProvider->contains(md5($this->clientEmail))
+            ->shouldBeCalled()
+            ->willReturn(true);
 
-        $this->cacheProvider->expects($this->once())
-            ->method('fetch')
-            ->with($this->equalTo(md5($this->clientEmail)))
-            ->will($this->returnValue('response_access_token'));
+        $this->cacheProvider->fetch(md5($this->clientEmail))
+            ->shouldBeCalled()
+            ->willReturn('response_access_token');
 
         $this->assertSame('response_access_token', $this->object->getAccessToken());
     }
 
     public function testAccessTokenError()
     {
-        $this->cacheProvider->expects($this->once())
-            ->method('contains')
-            ->with($this->equalTo(md5($this->clientEmail)))
-            ->will($this->returnValue(false));
+        $this->cacheProvider->contains(md5($this->clientEmail))
+            ->shouldBeCalled()
+            ->willReturn(false);
 
         if (!function_exists('openssl_x509_read')) {
             $this->markTestSkipped('The "openssl_x509_read" function is not available.');
@@ -128,23 +109,12 @@ class P12AuthClientTest extends \PHPUnit_Framework_TestCase
             $this->setExpectedException('Kairos\GoogleAnalyticsClientBundle\Exception\GoogleAnalyticsException');
         }
 
-        $httpResponse = $this->getMockBuilder('Guzzle\Http\Message\Response')->disableOriginalConstructor()->getMock();
-        $httpResponse->expects($this->once())
-            ->method('getBody')
-            ->will($this->returnValue(json_encode(array('error' => 'error'))));
+        $httpResponse = $this->prophesize('Psr\Http\Message\ResponseInterface');
+        $httpResponse->getBody()->shouldBeCalled()
+            ->willReturn(json_encode(array('error' => 'error')));
 
-        $httpRequest = $this->getMock('Guzzle\Http\Message\RequestInterface');
-        $httpRequest->expects($this->once())
-            ->method('send')
-            ->will($this->returnValue($httpResponse));
-
-        $this->httpClient->expects($this->once())
-            ->method('post')
-            ->with(
-                $this->equalTo($this->baseUrl . $this->tokenEndPoint),
-                $this->equalTo(array('Content-Type' => 'application/x-www-form-urlencoded'))
-            )
-            ->will($this->returnValue($httpRequest));
+        $this->httpClient->post($this->baseUrl . $this->tokenEndPoint, Argument::type('array'))
+            ->willReturn($httpResponse);
 
         $this->object->getAccessToken();
     }

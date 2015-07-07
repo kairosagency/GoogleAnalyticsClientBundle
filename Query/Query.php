@@ -1,10 +1,10 @@
 <?php
 
-namespace Kairos\GoogleAnalyticsClientBundle\Consumer;
+namespace Kairos\GoogleAnalyticsClientBundle\Query;
 
 /**
  * Class Query
- * @package Kairos\GoogleAnalyticsClientBundle\Consumer
+ * @package Kairos\GoogleAnalyticsClientBundle\Query
  */
 class Query implements QueryInterface
 {
@@ -66,7 +66,6 @@ class Query implements QueryInterface
     protected $quotaUser;
 
 
-
     /**
      * Creates a google analytics query.
      *
@@ -115,7 +114,7 @@ class Query implements QueryInterface
      *
      * @param string $ids The google analytics query ids.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setIds(array $ids)
     {
@@ -129,7 +128,7 @@ class Query implements QueryInterface
      *
      * @param string $accessToken
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setAccessToken($accessToken)
     {
@@ -163,7 +162,7 @@ class Query implements QueryInterface
      *
      * @param \DateTime $startDate The google analytics query start date.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setStartDate(\DateTime $startDate = null)
     {
@@ -187,7 +186,7 @@ class Query implements QueryInterface
      *
      * @param \DateTime $endDate The google analytics query end date.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setEndDate(\DateTime $endDate = null)
     {
@@ -211,7 +210,7 @@ class Query implements QueryInterface
      *
      * @param array $metrics The google analytics query metrics.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setMetrics(array $metrics)
     {
@@ -245,7 +244,7 @@ class Query implements QueryInterface
      *
      * @param array $dimensions The google analytics query dimensions.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setDimensions(array $dimensions)
     {
@@ -279,7 +278,7 @@ class Query implements QueryInterface
      *
      * @param array $sorts The google analytics query sorts.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setSorts(array $sorts)
     {
@@ -314,7 +313,7 @@ class Query implements QueryInterface
      * @param array $filters The google analytics query filters.
      * @param string $filtersSeparator The google analytics query filters separator.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setFilters(array $filters, $filtersSeparator = ',')
     {
@@ -359,7 +358,7 @@ class Query implements QueryInterface
      *
      * @param string $segment The google analytics query segment.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setSegment($segment)
     {
@@ -383,7 +382,7 @@ class Query implements QueryInterface
      *
      * @param integer $startIndex The google analytics start index.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setStartIndex($startIndex)
     {
@@ -407,7 +406,7 @@ class Query implements QueryInterface
      *
      * @param integer $maxResults The google analytics query max result count.
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setMaxResults($maxResults)
     {
@@ -421,7 +420,7 @@ class Query implements QueryInterface
      *
      * @param string $baseUrlApi
      *
-     * @return \Kairos\GoogleAnalyticsClientBundle\Consumer\Query The query.
+     * @return \Kairos\GoogleAnalyticsClientBundle\Query\Query The query.
      */
     public function setBaseUrlApi($baseUrlApi)
     {
