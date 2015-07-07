@@ -5,6 +5,8 @@ namespace Kairos\GoogleAnalyticsClientBundle\Consumer;
 use Guzzle\Http\Client as HttpClient;
 use Kairos\GoogleAnalyticsClientBundle\AuthClient\AuthClientInterface;
 use Kairos\GoogleAnalyticsClientBundle\Exception\GoogleAnalyticsException;
+use Guzzle\Batch\Batch;
+use Guzzle\Batch\BatchRequestTransfer;
 
 /**
  * Class Request
@@ -81,7 +83,75 @@ class Request implements RequestInterface
      */
     protected function getGAResult()
     {
-        $start = microtime(true);
+        $transferStrategy = new BatchRequestTransfer(10);
+        $divisorStrategy = $transferStrategy;
+
+        $mainBatch = new Batch($transferStrategy, $divisorStrategy);
+        $subBatch = new Batch($transferStrategy, $divisorStrategy);
+
+        $toMerge = array();
+        $results = array();
+        $subResults = array();
+        $requestUrls = $this->query->build();
+        foreach ($requestUrls as $key => $queryParams) {
+            $mainBatch->add($this->httpClient->get($this->query->getBaseUrlApi(), array(), array('query' => $queryParams)));
+            if($key%10 === 0) {
+                $start = microtime(true);
+                $results = array_merge($results, $mainBatch->flush());
+                $dt = 1000100-(microtime(true) - $start);
+                if($dt > 0) {
+                    usleep($dt);
+                }
+            }
+        }
+
+        $results = array_merge($results, $mainBatch->flush());
+
+        foreach($results AS $request) {
+
+            $response = json_decode($request->getResponse()->getBody(), true);
+            $toMerge[] = $response;
+
+
+            // should paginate ?
+            if($response['totalResults'] > $response['query']['max-results']) {
+                // we already fetched page 1 so we start at page 2
+                $startIndex = $response['query']['start-index']+1;
+                $index = 0;
+                while (($response['totalResults'] >= $startIndex * $response['query']['max-results'])) {
+
+                    $subQuery = clone($request->getQuery());
+                    $subQuery->set('start-index', $startIndex);
+                    $subBatch->add(
+                        $this->httpClient->get(
+                            $this->query->getBaseUrlApi(),
+                            array(),
+                            array('query' => $subQuery->toArray())
+                        )
+                    );
+
+                    if($index%10 === 0) {
+                        $start = microtime(true);
+                        $subResults = array_merge($subResults, $subBatch->flush());
+                        $dt = 1000100-(microtime(true) - $start);
+                        if($dt > 0) {
+                            usleep($dt);
+                        }
+                    }
+                    unset($subQuery);
+                    $index++;
+                }
+            }
+        }
+
+
+        foreach($subResults AS $request) {
+            $response = json_decode($request->getResponse()->getBody(), true);
+            $toMerge[] = $response;
+        }
+        return $toMerge;
+
+        /*$start = microtime(true);
 
         $results = array();
         $requestUrls = $this->query->build();
@@ -126,7 +196,7 @@ class Request implements RequestInterface
 
         $this->userIpTable = array();
 
-        return $results;
+        return $results;*/
     }
 
     /**
