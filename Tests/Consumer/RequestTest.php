@@ -68,8 +68,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         $this->httpClient->get($baseUrl, array(), Argument::type('array'))
             ->shouldBeCalledTimes(3)->willReturn($guzzleRequest);
 
-        $guzzleRequest->send()->shouldBeCalled()
-            ->willReturn($guzzleResponse);
+        $guzzleRequest->getClient()->shouldBeCalled();
 
 
         $result = $this->object->getResult();

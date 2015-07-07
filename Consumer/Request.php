@@ -83,6 +83,7 @@ class Request implements RequestInterface
      */
     protected function getGAResult()
     {
+        // todo : add userip support back
         $transferStrategy = new BatchRequestTransfer(10);
         $divisorStrategy = $transferStrategy;
 
@@ -104,7 +105,6 @@ class Request implements RequestInterface
                 }
             }
         }
-
         $results = array_merge($results, $mainBatch->flush());
 
         foreach($results AS $request) {
@@ -143,7 +143,7 @@ class Request implements RequestInterface
                 }
             }
         }
-
+        $subResults = array_merge($subResults, $subBatch->flush());
 
         foreach($subResults AS $request) {
             $response = json_decode($request->getResponse()->getBody(), true);
