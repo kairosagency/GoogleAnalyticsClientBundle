@@ -46,30 +46,41 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             array('userIp' => '192.190.190.1')
         );
 
+        $result = array('query' =>
+            array(
+                'start-index' => 1,
+                'max-results' => 100
+            ),
+            'totalResults' => 60,
+            'totalsForAllResults' => array(60),
+            'rows' => array('a', 'b', 'c')
+        );
+
 
         $this->query->build()->shouldBeCalled()->willReturn($requests);
         $this->query->getBaseUrlApi()->shouldBeCalled()->willReturn($baseUrl);
 
         $guzzleRequest = $this->prophesize('Guzzle\Http\Message\RequestInterface');
         $guzzleResponse = $this->prophesize('Guzzle\Http\Message\Response');
-        $guzzleResponse->getStatusCode()->shouldBeCalled()
-            ->willReturn(200);
+
+        $query = $this->prophesize('Guzzle\Http\QueryString');
+        $query->set('start-index', $result['query']['start-index']+1);
+        $query->toArray()->willReturn(array('query'=>array('userIp' => '192.190.190.2')));
+
+
+        $guzzleRequest->getClient()->willReturn($this->httpClient);
+        $guzzleRequest->getQuery()->willReturn($query);
+
+        $guzzleRequest->getResponse()->willReturn($guzzleResponse);
         $guzzleResponse->getBody()->shouldBeCalled()
-            ->willReturn(json_encode(array('query' =>
-                array(
-                    'start-index' => 1,
-                    'max-results' => 100
-                ),
-                'totalResults' => 240,
-                'totalsForAllResults' => array(240),
-                'rows' => array('a', 'b', 'c')
-            )));
+            ->willReturn(json_encode($result));
+
+
 
         $this->httpClient->get($baseUrl, array(), Argument::type('array'))
-            ->shouldBeCalledTimes(3)->willReturn($guzzleRequest);
+            ->shouldBeCalledTimes(count($requests))->willReturn($guzzleRequest);
 
-        $guzzleRequest->getClient()->shouldBeCalled();
-
+        $this->httpClient->send(Argument::type('array'))->shouldBeCalled();
 
         $result = $this->object->getResult();
 
@@ -78,9 +89,9 @@ class RequestTest extends \PHPUnit_Framework_TestCase
                 'start-index' => 1,
                 'max-results' => 100
             ),
-            'totalResults' => 240,
-            'totalsForAllResults' => array(240, 240, 240),
-            'rows' => array('a', 'b', 'c','a', 'b', 'c','a', 'b', 'c')
+            'totalResults' => 60,
+            'totalsForAllResults' => array(60),
+            'rows' => array('a', 'b', 'c')
         ),$result);
     }
 }
