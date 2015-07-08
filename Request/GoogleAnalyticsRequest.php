@@ -73,7 +73,7 @@ class GoogleAnalyticsRequest implements GoogleAnalyticsRequestInterface
     protected function request($baseUrl, $params)
     {
 
-        $response = $this->client->get($baseUrl, array(), array('query' => $params));
+        $response = $this->client->get($baseUrl, array(), $params);
 
         if ($response->getStatusCode() != 200) {
             throw GoogleAnalyticsException::invalidQuery($response->getReasonPhrase());
