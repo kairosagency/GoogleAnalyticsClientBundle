@@ -11,8 +11,10 @@ class Query implements QueryInterface
     /** Estimation of the base length of a Googla analytics request url */
     const BASE_LENGTH_GA_URL = 300;
 
-    /** Length limit of a Google analytics request url */
-    const LENGTH_LIMIT_GA_URL = 2000;
+    /** Length limit of a Google analytics request url
+    real limit : 9415 (not included)
+     */
+    const LENGTH_LIMIT_GA_URL = 8000;
 
     /** @var array */
     protected $ids;
@@ -500,58 +502,31 @@ class Query implements QueryInterface
      */
     public function build()
     {
-        $GARequestUrls = array();
-        $currentFilters = $this->getFilters();
+        $initialQuery = $this->generate();
+        $initialLength = $this->queryLength($initialQuery);
 
-        if (count($currentFilters) > 0) {
-
+        if($initialLength > self::LENGTH_LIMIT_GA_URL) {
+            $GARequestUrls = array();
             $baseUrlLength = $this->getBaseLengthUrlGAWithoutFilters();
-            $currentUrlLength = $baseUrlLength;
-            $filters = array();
-            $filtersTmp = array();
-            $idxFilter = 0;
-
-            foreach ($currentFilters as $filter) {
-
-                // We fill the filters temp array in order to check the length of the url generate
-                $filtersTmp[] = $filter;
-                $this->setFilters($filtersTmp);
-                $currentUrlLength += $this->queryLength($this->generate());
-
-                // If the limit url length is reached, we keep in $GARequestUrls the url
-                if ($currentUrlLength > self::LENGTH_LIMIT_GA_URL) {
-
-                    // We set the filters array in order to generate the url that will be sent
-                    $this->setFilters($filters);
-                    $GARequestUrls[] = $this->generate();
-
-                    // Reset the current ur lLength with the $baseUrlLength and last filter
-                    $this->setFilters(array($filter));
-                    $currentUrlLength = $baseUrlLength + $this->queryLength($this->generate());
-
-                    // And reset all the var for the generation of the url length
-                    $filters = array();
-                    $filtersTmp = array();
-                    $idxFilter = 0;
-                }
-
-                // We fill the official filters array
-                $filters[] = $filter;
-                $idxFilter++;
+            $divisionCoef = ceil($initialLength/(self::LENGTH_LIMIT_GA_URL-$baseUrlLength));
+            $offset = ceil(count($this->getFilters())/$divisionCoef);
+            $filterChunks = array_chunk($this->getFilters(), $offset);
+            foreach($filterChunks AS $filterChunk) {
+                $GARequestUrls[] = $this->generate($filterChunk);
             }
+            return $GARequestUrls;
         }
-
-        $GARequestUrls[] = $this->generate();
-
-        return $GARequestUrls;
+        else
+            return array($initialQuery);
     }
+
 
     /**
      * Generate a request url.
      *
      * @return string The builded query.
      */
-    protected function generate()
+    protected function generate(array $overrideFilters = array())
     {
         $query = array(
             'ids'          => $this->normalizeIds(),
@@ -583,11 +558,14 @@ class Query implements QueryInterface
             $query['sort'] = implode(',', $this->getSorts());
         }
 
-        if ($this->hasFilters()) {
-            $query['filters'] = implode($this->getFiltersSeparator(), $this->getFilters());
+        if(count($overrideFilters) === 0) {
+            if ($this->hasFilters()) {
+                $query['filters'] = implode($this->getFiltersSeparator(), $this->getFilters());
+            }
+        } else {
+            $query['filters'] = implode($this->getFiltersSeparator(), $overrideFilters);
         }
 
-        //return sprintf('%s?%s', $this->getBaseUrlApi(), http_build_query($query));
         return $query;
     }
 
@@ -606,7 +584,10 @@ class Query implements QueryInterface
      */
     public function queryLength(array $query)
     {
-        return strlen($this->queryToString($query));
+        if(function_exists('mb_strlen'))
+            return mb_strlen($this->queryToString($this->generate()), 'UTF-8');
+        else
+            return strlen($this->queryToString($this->generate()));
     }
 
     /**
