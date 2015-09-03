@@ -29,7 +29,7 @@ use Kairos\GoogleAnalyticsClientBundle\Consumer\Query;
 
 $profileId = 'ga:XXXXXXXX';
 $baseUrlApi = 'https://www.googleapis.com/analytics/v3/data/ga';
-$query = new Query($profileId, $baseUrlApi);
+$query = new Query(array($profileId), $baseUrlApi);
 
 // Default values :)
 $query->setMetrics(array('ga:pageviews'));
